@@ -6,7 +6,7 @@
 
 //40 35 94 -1 15 59 20 14 71 -1 26 88 -1 -1 2 4 -1 -1 39 -1 10 83 34 -1 otrezok
 
-int breakdown(const char* name,int n, std::fstream files [], int* ms) {
+int* breakdown(const char* name,int n, std::fstream files [], int* ms) {
 	int number_of_intmax=0,number_before,number_of_file=0,number_now;
 	std::ifstream fin(name);
 	if (!fin.good())
@@ -44,11 +44,36 @@ int breakdown(const char* name,int n, std::fstream files [], int* ms) {
 		files[number_of_file] << INT_MAX<< " ";
 	}
 	ms[number_of_file]++;
-	int golden = 0;
-	for (int l = 0; l < n; l++) golden += ms[l];
-	
+	int golden_max = ms[0];
+	int* golden = new int[n];
+	for (int l = 0; l < n; l++) golden[l] = 0;
+	golden[n - 1] = 1;
+	while (golden[n] < golden_max) {
+		int h = golden[n];
+		for (int a = 1; n - a >= 0; a++) 
+		{
+			golden[n] += golden[n - a];
+		}
+		for (int a = 1; n - a > 1; a++) 
+		{
+			golden[n - a - 1] = golden[n - a];
+		}
+	}
+	int* ip = new int[n];
+	for (int a = 0; a < n; a++) {
+		ip[a] = golden[a] - ms[a];
+	}
+
 	fin.close();
-	return number_of_intmax;
+	for (int i = 0; i < n; i++) {
+		files[i].close();
+	}
+	return ip;
+}
+
+void merger(int*ip,int n, std::fstream files[]) {
+	for()
+
 }
 
 int main() {
@@ -72,11 +97,9 @@ int main() {
 			float time = 0;
 			std::string name = "Shell" + std::to_string(size) + "_in_range_" + std::to_string(range) + ".txt";
 			const char* starter_file = name.c_str();
-			max = breakdown(starter_file,n, files, ms);
-			for (int i = 0; i < n; i++) {
-				files[i].close();
-			}
-
+			int* ip = new int[n];
+			ip=breakdown(starter_file,n, files, ms);
+			
 		}
 	}
 }
