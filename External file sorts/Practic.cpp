@@ -4,101 +4,124 @@
 #include<string>
 #include<vector>
 
-//40 35 94 -1 15 59 20 14 71 -1 26 88 -1 -1 2 4 -1 -1 39 -1 10 83 34 -1 otrezok
+struct FileStruct
+{
+	int filesCount;
+	std::string original;
+	std::string* fileName = nullptr;
+	std::fstream fileStream;
+	int* ip = nullptr;
+	int* ms = nullptr;
+	int L = 0;
+};
 
-int* breakdown(const char* name,int n, std::fstream files [], int* ms) {
-	int number_of_intmax=0,number_before,number_of_file=0,number_now;
-	std::ifstream fin(name);
-	if (!fin.good())
-		std::cout << "File not found!" << std::endl;
-	else
+std::string* CreateFiles(int filesCount)
+{
+	std::string* fileName = new std::string[filesCount];
+	for (int i = 0; i < filesCount; ++i)
 	{
-		fin >> number_now;
+		std::string name = "WorkFile" + std::to_string(i) + ".txt";
+		fileName[i] = name;
+		std::ofstream file(name);
+		file.close();
+	}
+	return fileName;
+}
+
+//40 35 94 -1 15 59 20 14 71 -1 26 88 -1 -1 2 4 -1 -1 39 -1 10 83 34 -1 otrezok
+void third_stage_breackdown(FileStruct& file, int i, std::vector<std::fstream> fileVec);
+
+void second_stage_breakdown(FileStruct & file, int i, std::vector<std::fstream> fileVec) {
+	int number_of_intmax = 0, number_before=INT_MIN, number_now;
+	file.fileStream >> number_now;
+	while (number_before <= number_now) {
 		if (number_now == INT_MAX) {
 			number_of_intmax++;
 			number_before = INT_MIN;
+			file.fileStream >> number_now;
 		}
 		else {
-			files[number_of_file] << number_now << " ";
+			fileVec[i] << number_now << " ";
 			number_before = number_now;
-		}
-		while (fin >> number_now)
-		{
-			if (number_before > number_now) {
-				files[number_of_file] << INT_MAX << " ";
-				ms[number_of_file]++;
-				number_of_file = (number_of_file + 1) % n;
-				files[number_of_file] << number_now << " ";
-			}
-			else {
-				if (number_now == INT_MAX) {
-					number_of_intmax++;
-					
-				}
-				else {
-					files[number_of_file] << number_now << " ";
-				}
-			}
-			number_before = number_now;
-		}
-		files[number_of_file] << INT_MAX<< " ";
-	}
-	ms[number_of_file]++;
-	int golden_max = ms[0];
-	int* golden = new int[n];
-	for (int l = 0; l < n; l++) golden[l] = 0;
-	golden[n - 1] = 1;
-	while (golden[n] < golden_max) {
-		int h = golden[n];
-		for (int a = 1; n - a >= 0; a++) 
-		{
-			golden[n] += golden[n - a];
-		}
-		for (int a = 1; n - a > 1; a++) 
-		{
-			golden[n - a - 1] = golden[n - a];
+			file.fileStream >> number_now;
 		}
 	}
-	int* ip = new int[n];
-	for (int a = 0; a < n; a++) {
-		ip[a] = golden[a] - ms[a];
+	file.ms[i]--;
+	if (!file.fileStream) {
+		for (int i = 0; i < file.filesCount - 1; i++)
+			fileVec[i].close();
+		file.fileStream.close();
 	}
-
-	fin.close();
-	for (int i = 0; i < n; i++) {
-		files[i].close();
+	else {
+		// 3 stage
+		third_stage_breackdown(file,i,fileVec);
 	}
-	return ip;
 }
 
-void merger(int*ip,int n, std::fstream files[]) {
-	for()
+void third_stage_breackdown(FileStruct& file, int i, std::vector<std::fstream> fileVec) {
+	if (file.ms[i] < file.ms[i + 1]) {
+		i++;
+		second_stage_breakdown(file,i, fileVec);
+	}
+	else {
+		if (file.ms[i] == 0) {
+			file.L++;
+			int ip0 = file.ip[0];
+			i = 0;
+			for (int k = 0; k < file.filesCount - 1; k++) {
+				file.ms[k] = file.ms[k + 1] - file.ip[k] + ip0;
+				file.ip[k] = file.ip[k + 1] + ip0;
+			}
+			second_stage_breakdown(file,i, fileVec);
+		}
+		else {
+			i = 0;
+			second_stage_breakdown( file, i, fileVec);
 
+		}
+	}
 }
+
+
+void breakdown(FileStruct& file) {
+	for (int i = 0; i < file.filesCount-1; i++) file.ms[i] = 1;
+
+	for (int i = 0; i < file.filesCount - 1; i++) file.ip[i] = 1;
+
+	file.ip[file.filesCount - 1] = 0;
+
+	file.ms[file.filesCount - 1] = 0;
+
+	file.L = 1;
+	int	i = 0;
+
+	file.fileStream = std::fstream(file.original, std::ios::in);
+
+	std::vector<std::fstream> fileVec;
+	for (int k = 0; k < file.filesCount - 1; k++)
+		fileVec.push_back(std::fstream(file.fileName[k], std::ios::out));
+	//2 stage
+	second_stage_breakdown( file,i,fileVec);
+	
+}
+
 
 int main() {
 	std::cout << "Enter the number of files:";
-	int n, max;
-	std::cin >> n;
+	FileStruct work_file;
+	int max;
+	std::cin >> work_file.filesCount;
 	std::cout << std::endl;
-	std::fstream* files = new std::fstream[n];
-	for (int i = 0; i < n; i++) {
-		std::string name = "WorkFile" + std::to_string(i) + ".txt";
-		const char* file = name.c_str();
-		files[i].open(file);
-		if (!files[i].is_open()) std::cout << "Error" << std::endl;
-	}
+	work_file.fileName = CreateFiles(work_file.filesCount);
 	for (int range = 10; range <= 100000; range *= 100)
 	{
 		for (int size = 10000; size <= 1000000; size *= 10)
 		{
-			int *ms =new int [n];
-			for (int i = 0; i < n; i++) ms[i] = 0;
-			float time = 0;
 			std::string name = "Shell" + std::to_string(size) + "_in_range_" + std::to_string(range) + ".txt";
-			const char* starter_file = name.c_str();
-			int* ip = new int[n];
-			ip=breakdown(starter_file,n, files, ms);
+			work_file.original = name.c_str();
+			work_file.ip = new int[work_file.filesCount];
+			work_file.ms = new int[work_file.filesCount];
+			breakdown(work_file);
 			
 		}
 	}
