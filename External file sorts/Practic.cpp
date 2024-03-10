@@ -4,6 +4,7 @@
 #include<string>
 #include<vector>
 
+
 struct FileStruct
 {
 	int filesCount;
@@ -28,7 +29,6 @@ std::string* CreateFiles(int filesCount)
 	return fileName;
 }
 
-//40 35 94 -1 15 59 20 14 71 -1 26 88 -1 -1 2 4 -1 -1 39 -1 10 83 34 -1 otrezok
 void third_stage_breackdown(FileStruct& file, int i, std::vector<std::fstream> fileVec);
 
 void second_stage_breakdown(FileStruct & file, int i, std::vector<std::fstream> fileVec) {
@@ -95,7 +95,9 @@ void breakdown(FileStruct& file) {
 	file.L = 1;
 	int	i = 0;
 
-	file.fileStream = std::fstream(file.original, std::ios::in);
+	std::fstream foo;
+	foo.open(file.original, std::ios::in);
+	file.fileStream.swap(foo);
 
 	std::vector<std::fstream> fileVec;
 	for (int k = 0; k < file.filesCount - 1; k++)
