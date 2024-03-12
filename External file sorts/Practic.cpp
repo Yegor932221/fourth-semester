@@ -51,6 +51,7 @@ void second_stage_breakdown(FileStruct & file, int i, std::vector<std::fstream> 
 		for (int i = 0; i < file.filesCount - 1; i++)
 			fileVec[i].close();
 		file.fileStream.close();
+		return;
 	}
 	else {
 		// 3 stage
@@ -83,6 +84,8 @@ void third_stage_breackdown(FileStruct& file, int i, std::vector<std::fstream> f
 }
 
 
+
+
 void breakdown(FileStruct& file) {
 	for (int i = 0; i < file.filesCount-1; i++) file.ms[i] = 1;
 
@@ -104,9 +107,44 @@ void breakdown(FileStruct& file) {
 		fileVec.push_back(std::fstream(file.fileName[k], std::ios::out));
 	//2 stage
 	second_stage_breakdown( file,i,fileVec);
-	
 }
 
+void merger(FileStruct& file) {
+	std::fstream foo;
+	foo.open(file.original, std::ios::out);
+	file.fileStream.swap(foo);
+
+	std::vector<std::fstream> fileVec;
+	for (int k = 0; k < file.filesCount - 1; k++)
+		fileVec.push_back(std::fstream(file.fileName[k], std::ios::in));
+	bool mss=true;
+	if (file.L == 0) return;
+	while (file.ip[file.filesCount-2]!=0)
+	{
+		while (mss) 
+		{
+			for (int i = 0; i < (file.filesCount - 1); i++) 
+			{
+				if (mss && (file.ms[i] > 0)) mss = true;
+				else 
+				{
+					mss = false;
+					break;
+				}
+			}
+			if (mss) 
+			{
+				for (int i = 0; i < (file.filesCount - 1); i++)
+					file.ms[i]--;
+				file.ms[file.filesCount - 1]++;
+			}
+			for (int i = 0; i < (file.filesCount - 1); i++) 
+			{
+
+			}
+		}
+	}
+}
 
 int main() {
 	std::cout << "Enter the number of files:";
