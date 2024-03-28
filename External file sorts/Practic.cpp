@@ -13,7 +13,6 @@ struct FileStruct
 	int* ip = nullptr;
 	int* ms = nullptr;
 	int L = 0;
-	int* sliv = nullptr;
 };
 
 std::string* CreateFiles(int filesCount)
@@ -30,16 +29,15 @@ std::string* CreateFiles(int filesCount)
 }
 
 
-int MinIndex(int* arr, int n) {
-	int minIndex, min, f;
+int MinIndex(FileStruct& file) {
+	int minIndex, min;
 	minIndex = 0;
-	min = arr[0];
-	for (int i = 1; i <= n - 2; ++i)
+	min = file.ip[0];
+	for (int i = 1; i <= file.filesCount - 2; i++)
 	{
-		f = arr[i];
-		if (f < min)
+		if (file.ip[i] < min)
 		{
-			min = f;
+			min = file.ip[i];
 			minIndex = i;
 		}
 	}
@@ -47,8 +45,10 @@ int MinIndex(int* arr, int n) {
 }
 
 
-void breakdown(FileStruct& file, std::vector<std::fstream*> &fileVec, std::ifstream &fileStream) {
-	for (int k = 0; k < file.filesCount - 1; k++) {
+void breakdown(FileStruct& file, std::vector<std::fstream*> &fileVec, std::ifstream &fileStream) 
+{
+	for (int k = 0; k < file.filesCount - 1; k++) 
+	{
 		fileVec[k]->open(file.fileName[k], std::ios::out);
 	}
 
@@ -56,10 +56,8 @@ void breakdown(FileStruct& file, std::vector<std::fstream*> &fileVec, std::ifstr
 	{
 		file.ms[i] = 1;
 		file.ip[i] = 1;
-		file.sliv[i] = INT_MAX;
 	}
 	file.ip[file.filesCount - 1] = 0;
-	file.sliv[file.filesCount - 1] = INT_MAX;
 	file.ms[file.filesCount - 1] = 0;
 
 	file.L = 1;
@@ -69,8 +67,10 @@ void breakdown(FileStruct& file, std::vector<std::fstream*> &fileVec, std::ifstr
 
 	int  number_before = INT_MIN, number_now;
 	fileStream >> number_now;
-	while (!fileStream.eof()) {
-		while (number_now == INT_MAX) {
+	while (!fileStream.eof()) 
+	{
+		while (number_now == INT_MAX) 
+		{
 			file.number_of_intmax++;
 			fileStream >> number_now;
 		}
@@ -79,12 +79,14 @@ void breakdown(FileStruct& file, std::vector<std::fstream*> &fileVec, std::ifstr
 		number_before = number_now;
 		fileStream >> number_now;
 
-		while ((!fileStream.eof()) && (number_before <= number_now)) {
+		while ((!fileStream.eof()) && (number_before <= number_now))
+		{
 			number_before = number_now;
 
 			if (number_now == INT_MAX)
 				file.number_of_intmax++;
-			else {
+			else 
+			{
 				*fileVec[i] << number_now << " ";
 			}
 			fileStream >> number_now;
@@ -92,12 +94,14 @@ void breakdown(FileStruct& file, std::vector<std::fstream*> &fileVec, std::ifstr
 		file.ms[i]--;
 		*fileVec[i] << INT_MAX << " ";
 		if (file.ms[i] < file.ms[i+1]) i++;
-		else {
+		else 
+		{
 			if (file.ms[i] == 0) {
 				file.L++;
 				int ip0 = file.ip[0];
 				i = 0;
-				for (int k = 0; k < file.filesCount - 1; k++) {
+				for (int k = 0; k < file.filesCount - 1; k++) 
+				{
 					file.ms[k] = file.ip[k + 1] - file.ip[k] + ip0;
 					file.ip[k] = file.ip[k + 1] + ip0;
 				}
@@ -105,25 +109,30 @@ void breakdown(FileStruct& file, std::vector<std::fstream*> &fileVec, std::ifstr
 			else i = 0;
 		}
 		number_before = number_now;
-		if (fileStream.eof() && number_now != INT_MAX) {
+		if (fileStream.eof() && number_now != INT_MAX) 
+		{
 			*fileVec[i] << number_before << " " << INT_MAX;
 			file.ms[i]--;
 		}
 	}
-	for (int j = 0; j < file.filesCount-1; j++) {
-		fileVec[i]->close();
+	for (int j = 0; j < file.filesCount; j++) 
+	{
+		fileVec[j]->close();
 	}
 	fileStream.close();
+
 }
 
-void merger(FileStruct& file, std::vector<std::fstream*>& fileVec, std::ofstream& fileStream) {
-
-	for (int k = 0; k < file.filesCount - 2; k++)
+void merger(FileStruct& file, std::ifstream& fileStream, std::vector<std::fstream*> fileVec)
+{
+	for (int k = 0; k <= file.filesCount - 2; k++)
 		fileVec[k]->open(file.fileName[k], std::ios::in);
 	fileVec[file.filesCount - 1]->open(file.fileName[file.filesCount - 1], std::ios::out);
-	
-	while (file.L != 0){
-		while (*fileVec[file.filesCount - 2] >> file.ip[file.filesCount - 2]) {
+
+	while (file.L != 0)
+	{
+		while (*fileVec[file.filesCount - 2] >> file.ip[file.filesCount - 2])
+		{
 			bool allms = true;
 			for (int i = 0; i < (file.filesCount - 1); i++)
 			{
@@ -141,18 +150,17 @@ void merger(FileStruct& file, std::vector<std::fstream*>& fileVec, std::ofstream
 			}
 			for (int i = 0; i < (file.filesCount - 1); ++i)
 			{
-				if (file.ms[i] == 0) {
-					if (i == file.filesCount - 2)
-						continue;
+				if (file.ms[i] == 0)
+				{
+					if (i == file.filesCount - 2) continue;
 					*fileVec[i] >> file.ip[i];
 				}
 
 				else
-				{ 
+				{
 					if (file.ms[i] > 0)
 					{
-						if (i == file.filesCount - 2)
-						{
+						if (i == file.filesCount - 2) {
 							fileVec[file.filesCount - 2]->close();
 							fileVec[file.filesCount - 2]->open(file.fileName[file.filesCount - 2], std::ios::in);
 						}
@@ -163,9 +171,10 @@ void merger(FileStruct& file, std::vector<std::fstream*>& fileVec, std::ofstream
 			}
 			for (; ;)
 			{
-				int indexMin = MinIndex(file.ip,file.filesCount);
-				if (file.ip[indexMin] == INT_MAX)
+				int indexMin = MinIndex(file);
+				if (file.ip[indexMin] == INT_MAX) {
 					break;
+				}
 				*fileVec[file.filesCount - 1] << file.ip[indexMin] << " ";
 				*fileVec[indexMin] >> file.ip[indexMin];
 			}
@@ -173,28 +182,31 @@ void merger(FileStruct& file, std::vector<std::fstream*>& fileVec, std::ofstream
 			{
 				*fileVec[file.filesCount - 1] << INT_MAX << " ";
 			}
-			else
-			{
-				for (int i = file.filesCount; i > 0; --i)
-				{
-					*fileVec[file.filesCount - 1] << INT_MAX << " ";
-				}
-			}
-			file.L--;
-			file.ip[file.filesCount - 1]++;
-			fileVec[file.filesCount - 2]->close();
-			fileVec[file.filesCount - 1]->close();
-			fileVec[file.filesCount - 1]->open(file.fileName[file.filesCount - 1], std::ios::in);
-			fileVec[file.filesCount - 2]->open(file.fileName[file.filesCount - 2], std::ios::out);
-			for (int i = file.filesCount - 1; i > 0; i--)
-			{
-				std::swap(file.fileName[i], file.fileName[i - 1]);
-				std::swap(fileVec[i], fileVec[i - 1]);
-				std::swap(file.ms[i], file.ms[i - 1]);
-				std::swap(file.ip[i], file.ip[i - 1]);
-			}
+
 		}
+		file.L--;
+		fileVec[file.filesCount - 2]->close();
+		fileVec[file.filesCount - 1]->close();
+		fileVec[file.filesCount - 1]->open(file.fileName[file.filesCount - 1], std::ios::in);
+		fileVec[file.filesCount - 2]->open(file.fileName[file.filesCount - 2], std::ios::out);
+		for (int i = file.filesCount - 1; i > 0; i--)
+		{
+			std::swap(file.fileName[i], file.fileName[i - 1]);
+			std::swap(fileVec[i], fileVec[i - 1]);
+			std::swap(file.ms[i], file.ms[i - 1]);
+		}
+
 	}
+	for (int j = 0; j < file.number_of_intmax;j++) {
+	*fileVec[0] << INT_MAX<< " ";
+	}
+	const char* sorted = file.fileName[0].c_str();
+
+	for (int j = 0; j < file.filesCount - 1; j++) {
+		fileVec[j]->close();
+	}
+	fileStream.close();
+	std::rename(sorted, "sorted.txt");
 }
 
 
@@ -202,22 +214,21 @@ void merger(FileStruct& file, std::vector<std::fstream*>& fileVec, std::ofstream
 
 int main() {
 	FileStruct work_file;
-	int max;
 	work_file.filesCount=4;
 	work_file.fileName = CreateFiles(work_file.filesCount);
-	for (int range = 10; range <= 100000; range *= 100)
+	for (int range = 1000; range <= 100000; range *= 100)
 	{
-		for (int size = 10000; size <= 1000000; size *= 10)
+		for (int size = 100000; size <= 1000000; size *= 10)
 		{
-			//std::string name = "Shell" + std::to_string(size) + "_in_range_" + std::to_string(range) + ".txt";
-			std::string name = "Small.txt";
+			std::string name = "Shell" + std::to_string(size) + "_in_range_" + std::to_string(range) + ".txt";
+		/*	std::string name = "Small.txt";*/
 			work_file.original = name.c_str();
 			work_file.ip = new int[work_file.filesCount];
 			work_file.ms = new int[work_file.filesCount];
-			work_file.sliv = new int[work_file.filesCount];
 			std::vector<std::fstream*> fileVec;
 			std::fstream* zero = nullptr;
-			for(int k = 0; k < work_file.filesCount; k++) {
+			for(int k = 0; k < work_file.filesCount; k++) 
+			{
 				zero = new std::fstream(work_file.fileName[k]);
 				zero->open(work_file.fileName[k], std::ios::out);
 				fileVec.push_back(zero);
@@ -227,8 +238,11 @@ int main() {
 			std::ifstream fileStream;
 			breakdown(work_file, fileVec, fileStream);
 			std::ofstream fileStream2;
-			merger(work_file, fileVec, fileStream2);
+			merger(work_file,fileStream, fileVec);
 			break;
+
+			delete work_file.ms;
+			delete work_file.ip;
 		}
 		break;
 	}
