@@ -32,7 +32,11 @@ public:
 	BinaryTree clone(Node* root) const;
 
 	void clear();
+	bool clear(int key);
+	bool clear(int key, Node* root);
 	void clear(Node* root);
+	Node* searchKey(int key);
+	Node* searchKey(int key, Node* root);
 private:
 	Node* addNode(Node* root, int key);
 	Node* _clone() const;

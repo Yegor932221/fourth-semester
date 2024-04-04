@@ -15,7 +15,12 @@ int main() {
 	tree.addNode(-5);
 	tree.addNode(13);
 	tree.addNode(2);
-	tree.printHorizontal();
+	tree.clear(-5);
+	if (tree.searchKey(2)) 
+	{
+		tree.printHorizontal();
+	}
 	std::cout <<std::endl << "Hight:" << tree.Hight();
 	std::cout << std::endl << "Count:" << tree.NodeCount();
+	tree.clear();
 }

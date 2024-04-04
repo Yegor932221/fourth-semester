@@ -156,8 +156,8 @@ int BinaryTree::NodeCount(Node* root) const
 {
 	int count, count_l, count_r;
 	if (root == nullptr) return 0;
-	count_l = NodeCount(m_root->getLeft());
-	count_r = NodeCount(m_root->getRight());
+	count_l = NodeCount(root->getLeft());
+	count_r = NodeCount(root->getRight());
 	count = 1 + count_l + count_r;
 	return count;
 }
@@ -175,4 +175,37 @@ int BinaryTree::Hight(Node* root) const
 	hight_r = Hight(root->getRight());
 	hight = 1 + std::max(hight_l, hight_r);
 	return hight;
+}
+
+bool BinaryTree::clear(int key) {
+	Node* cleared(searchKey(key));
+	if (cleared == nullptr) 
+		return false;
+	else
+	{
+		clear(cleared);
+		return true;
+	}
+}
+
+BinaryTree::Node* BinaryTree::searchKey(int key)
+{
+	return searchKey(key, m_root);
+}
+
+BinaryTree::Node* BinaryTree::searchKey(int key, Node* root) 
+{
+	if (root == nullptr) return nullptr;
+	if (root->getKey() == key)
+	{
+		return root;
+	}
+	Node* right(searchKey(key, root->getRight())), *left(searchKey(key, root->getLeft()));
+	if (left != nullptr)
+		return left;
+	
+	if (right != nullptr)
+		return right;
+
+	return nullptr;
 }
