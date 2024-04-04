@@ -36,12 +36,17 @@ public:
 	bool clear(int key, Node* root);
 	void clear(Node* root);
 	Node* searchKey(int key);
-	Node* searchKey(int key, Node* root);
+	Node* searchKey(Node* root, int key) const;
+
+	int MaxEl(Node* root) const;
+	int MaxEl() const;
+
+	int MinEl(Node* root) const;
+	int MinEl() const;
 private:
 	Node* addNode(Node* root, int key);
 	Node* _clone() const;
 	Node* _clone(Node* root) const;
-
 private:
 	Node* m_root = nullptr;
 };
