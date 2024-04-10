@@ -2,6 +2,8 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <iostream>
+#include <vector>
+#include <list>
 
 BinaryTree::Node::Node(int key, Node* left, Node* right)
 	: m_key(key)
@@ -58,10 +60,6 @@ bool BinaryTree::isIdeal() const
 	return false;
 }
 
-bool BinaryTree::isBalanced() const
-{
-	return false;
-}
 
 bool BinaryTree::isEmpty() const
 {
@@ -284,4 +282,123 @@ int BinaryTree::MinEl(Node* root) const
 int BinaryTree::MinEl() const
 {
 	return MinEl(m_root);
+}
+
+bool BinaryTree::isBalanced(Node* root)
+{
+	if (root != nullptr)
+	{
+		return true;
+	}
+	int right, left, difference;
+	right = Hight(root->getRight());
+	left = Hight(root->getLeft());
+	difference = (right - left);
+	difference=abs(difference);
+	if (difference > 1)
+	{
+		return false;
+	}	
+
+		if (!isBalanced(root->getLeft()))
+		{
+			return false;
+		}
+		if (!isBalanced(root->getRight()))
+		{
+			return false;
+		}
+	return true;
+}
+
+bool BinaryTree::isBalanced()
+{
+	return isBalanced(m_root);
+}
+
+std::vector<BinaryTree::Node*> BinaryTree::nodesVec(Node* root)
+{
+	//ToDo: выйти, если root == nullptr
+	if (root == nullptr)
+	{
+		std::vector<Node*> unprocessedNodes(1, nullptr);
+		return unprocessedNodes;
+	}
+	std::vector<Node*> Nodes;
+	std::list<Node*> unprocessedNodes(1, root);
+	while (!unprocessedNodes.empty()) 
+	{
+		Node* node = unprocessedNodes.front();
+		Nodes.push_back(node);
+		if (node->getLeft()) 
+		{
+			unprocessedNodes.push_back(node->getLeft());
+		}
+		if (node->getRight()) 
+		{
+			unprocessedNodes.push_back(node->getRight());
+		}
+		unprocessedNodes.pop_front();
+	}
+	return Nodes;
+}
+
+std::vector<BinaryTree::Node*> BinaryTree::nodesVec() 
+{
+	return nodesVec(m_root);
+}
+
+std::vector<int> BinaryTree::keysVec()
+{
+	std::vector<Node*> Nodes=nodesVec(m_root);
+	std::vector<int> array;
+	for (int i = 0; i < Nodes.size(); i++)
+	{
+		array.push_back(Nodes[i]->getKey());
+	}
+	int step = array.size(), m;
+	step = (step * 5 - 1) / 11;
+	for (; step > 0;) {
+		for (int i = 0; i < step; i++)
+		{
+			for (int j = i + step; j < array.size(); j += step)
+			{
+				int key = array[j];
+				int k = j - step;
+				while (k >= 0 && array[k] > key)
+				{
+					array[k + step] = array[k];
+					k -= step;
+				}
+				array[k + step] = key;
+			}
+		}
+		if (step == 1)break;
+		m = (step * 5 - 1) / 11;
+		step = std::max(m, 1);
+	}
+	return array;
+}
+
+
+int BinaryTree::level(Node* root,int key) 
+{
+	if (root == nullptr) return -1;
+	if (root->getKey() == key) 
+	{
+		return 1;
+	}
+	if(level(root->getLeft(),key)>0)
+	{
+		return (level(root->getLeft(), key) + 1);
+	}
+	if (level(root->getRight(), key) > 0)
+	{
+		return (level(root->getRight(), key) + 1);
+	}
+}
+
+int BinaryTree::level(int key) 
+{
+	return level(m_root, key);
 }

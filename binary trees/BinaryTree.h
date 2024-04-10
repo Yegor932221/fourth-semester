@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <iostream>
+#include <vector>
 
 class BinaryTree
 {
@@ -13,7 +14,6 @@ public:
 	~BinaryTree();
 
 	bool isIdeal() const;
-	bool isBalanced() const;
 	bool isEmpty()const;
 
 	Node* getRoot();
@@ -43,6 +43,16 @@ public:
 
 	int MinEl(Node* root) const;
 	int MinEl() const;
+
+	bool isBalanced(Node* root);
+	bool isBalanced();
+
+	std::vector<Node*> nodesVec();
+	std::vector<Node*> nodesVec(Node* root);
+	std::vector<int> keysVec();
+
+	int level(int key);
+	int level(Node* root, int key);
 private:
 	Node* addNode(Node* root, int key);
 	Node* _clone() const;
