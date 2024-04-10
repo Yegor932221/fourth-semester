@@ -33,7 +33,7 @@ public:
 
 	void clear();
 	bool clear(int key);
-	bool clear(int key, Node* root);
+
 	void clear(Node* root);
 	Node* searchKey(int key);
 	Node* searchKey(Node* root, int key) const;
@@ -53,6 +53,8 @@ public:
 
 	int level(int key);
 	int level(Node* root, int key);
+
+	Node* Parent(Node* root);
 private:
 	Node* addNode(Node* root, int key);
 	Node* _clone() const;

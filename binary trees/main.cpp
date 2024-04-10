@@ -15,6 +15,11 @@ int main() {
 	tree.addNode(-5);
 	tree.addNode(13);
 	tree.addNode(2);
+	tree.addNode(5);
+	tree.addNode(99);
+	tree.addNode(45);
+	tree.addNode(-7);
+	tree.addNode(789);
 	//tree.clear(-5);
 	if (tree.searchKey(2)) 
 	{
@@ -43,7 +48,11 @@ int main() {
 	{
 		std::cout << keys[i] << " ";
 	}
-	std::cout <<std::endl <<"Level 82:"<< tree.level(82);
+	std::cout <<std::endl <<"Level 82:"<< tree.level(82)<<std::endl;
 
-	tree.clear();
+	int key;
+	key = (tree.Parent(tree.searchKey(2)))->getKey();
+	std::cout << std::endl << "Parent of 2:" <<key << std::endl;
+
+	if(tree.clear(1)) tree.printHorizontal();
 }
