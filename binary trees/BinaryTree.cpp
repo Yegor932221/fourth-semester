@@ -123,13 +123,13 @@ BinaryTree BinaryTree::clone() const
 
 BinaryTree BinaryTree::clone(Node* root) const 
 {
-	BinaryTree clooone;
+	BinaryTree clone;
 	if (root == nullptr)
 	{
-		return clooone;
+		return clone;
 	}
-	clooone.m_root = _clone(root);
-	return clooone;
+	clone.m_root = _clone(root);
+	return clone;
 }
 
 BinaryTree::Node* BinaryTree::_clone() const 
@@ -186,25 +186,25 @@ int BinaryTree::NodeCount(Node* root) const
 	return count;
 }
 
-int BinaryTree::Hight()const
+int BinaryTree::Height()const
 {
-	return Hight(m_root);
+	return Height(m_root);
 }
 
-int BinaryTree::Hight(Node* root) const
+int BinaryTree::Height(Node* root) const
 {
-	int hight, hight_l, hight_r;
+	int height, height_l, height_r;
 	if (root == nullptr) 
 	{
 		return 0;
 	}
-	hight_l = Hight(root->getLeft());
-	hight_r = Hight(root->getRight());
-	hight = 1 + std::max(hight_l, hight_r);
-	return hight;
+	height_l = Height(root->getLeft());
+	height_r = Height(root->getRight());
+	height = 1 + std::max(height_l, height_r);
+	return height;
 }
 
-bool BinaryTree::clear(int key) 
+bool BinaryTree::remove(int key) 
 {
 	Node* node(searchKey(key));
 	Node* nodeParent = Parent(node);
@@ -325,46 +325,48 @@ BinaryTree::Node* BinaryTree::searchKey(Node* root, int key) const
 	return subTreeSearchResult;
 }
 
-int BinaryTree::MaxEl(Node* root)const 
+int BinaryTree::Max(Node* root)const 
 {
 	int max, left=INT_MIN, right=INT_MIN;
+	if (root == nullptr) return INT_MIN;
 	if (root->getLeft() != nullptr) 
 	{
-		left = MaxEl(root->getLeft());
+		left = Max(root->getLeft());
 	}
 	if (root->getRight() != nullptr)
 	{
-		right = MaxEl(root->getRight());
+		right = Max(root->getRight());
 	}
 	max = std::max(left, right);
 	max = std::max(max, root->getKey());
 	return(max);
 }
 
-int BinaryTree::MaxEl() const
+int BinaryTree::Max() const
 {
-	return MaxEl(m_root);
+	return Max(m_root);
 }
 
-int BinaryTree::MinEl(Node* root) const
+int BinaryTree::Min(Node* root) const
 {
+	if (root == nullptr) return INT_MAX;
 	int min, left = INT_MAX, right = INT_MAX;
 	if (root->getLeft() != nullptr)
 	{
-		left = MinEl(root->getLeft());
+		left = Min(root->getLeft());
 	}
 	if (root->getRight() != nullptr)
 	{
-		right = MinEl(root->getRight());
+		right = Min(root->getRight());
 	}
 	min = std::min(left, right);
 	min = std::min(min, root->getKey());
 	return(min);
 }
 
-int BinaryTree::MinEl() const
+int BinaryTree::Min() const
 {
-	return MinEl(m_root);
+	return Min(m_root);
 }
 
 bool BinaryTree::isBalanced(Node* root)
@@ -374,8 +376,8 @@ bool BinaryTree::isBalanced(Node* root)
 		return true;
 	}
 	int right, left, difference;
-	right = Hight(root->getRight());
-	left = Hight(root->getLeft());
+	right = Height(root->getRight());
+	left = Height(root->getLeft());
 	difference = (right - left);
 	difference=abs(difference);
 	if (difference > 1)
@@ -401,7 +403,6 @@ bool BinaryTree::isBalanced()
 
 std::vector<BinaryTree::Node*> BinaryTree::nodesVec(Node* root)
 {
-	//ToDo: выйти, если root == nullptr
 	if (root == nullptr)
 	{
 		std::vector<Node*> unprocessedNodes(1, nullptr);

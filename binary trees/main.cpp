@@ -1,11 +1,15 @@
-
-
-#include <assert.h>
 #include <stdlib.h>
 #include <iostream>
+#include <vector>
 #include "BinaryTree.h"
+//#include"BinaryTreeTester.h"
 
 int main() {
+
+	/*srand(time(0));
+	BinaryTreeTester tester(false, true);
+	tester.test(1000);*/
+
 	BinaryTree tree;
 	tree.addNode(55);
 	tree.addNode(-2);
@@ -25,9 +29,9 @@ int main() {
 	{
 		tree.printHorizontal();
 	}
-	std::cout <<std::endl << "Hight:" << tree.Hight();
-	std::cout << std::endl << "Max:" << tree.MaxEl();
-	std::cout << std::endl << "Min:" << tree.MinEl();
+	std::cout <<std::endl << "Height:" << tree.Height();
+	std::cout << std::endl << "Max:" << tree.Max();
+	std::cout << std::endl << "Min:" << tree.Min();
 	std::cout << std::endl << "Count:" << tree.NodeCount();
 
 	std::cout << std::endl << "IsBalanced:";
@@ -54,5 +58,5 @@ int main() {
 	key = (tree.Parent(tree.searchKey(2)))->getKey();
 	std::cout << std::endl << "Parent of 2:" <<key << std::endl;
 
-	if(tree.clear(1)) tree.printHorizontal();
+	if(tree.remove(1)) tree.printHorizontal();
 }

@@ -19,8 +19,8 @@ public:
 	Node* getRoot();
 	Node* addNode(int key);
 
-	int Hight(Node* root) const;
-	int Hight() const;
+	int Height(Node* root) const;
+	int Height() const;
 
 	int NodeCount() const;
 	int NodeCount(Node* root) const;
@@ -32,17 +32,17 @@ public:
 	BinaryTree clone(Node* root) const;
 
 	void clear();
-	bool clear(int key);
+	bool remove(int key);
 
 	void clear(Node* root);
 	Node* searchKey(int key);
 	Node* searchKey(Node* root, int key) const;
 
-	int MaxEl(Node* root) const;
-	int MaxEl() const;
+	int Max(Node* root) const;
+	int Max() const;
 
-	int MinEl(Node* root) const;
-	int MinEl() const;
+	int Min(Node* root) const;
+	int Min() const;
 
 	bool isBalanced(Node* root);
 	bool isBalanced();
