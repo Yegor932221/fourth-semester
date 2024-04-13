@@ -2,13 +2,13 @@
 #include <iostream>
 #include <vector>
 #include "BinaryTree.h"
-//#include"BinaryTreeTester.h"
+#include"BinaryTreeTester.h"
 
 int main() {
 
-	/*srand(time(0));
+	srand(time(0));
 	BinaryTreeTester tester(false, true);
-	tester.test(1000);*/
+	tester.test(1000);
 
 	BinaryTree tree;
 	tree.addNode(55);

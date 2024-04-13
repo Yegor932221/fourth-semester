@@ -51,7 +51,7 @@ BinaryTree::~BinaryTree()
 	clear();
 }
 
-BinaryTree::Node* BinaryTree::getRoot() {
+BinaryTree::Node* BinaryTree::getRoot() const {
 	return m_root;
 }
 

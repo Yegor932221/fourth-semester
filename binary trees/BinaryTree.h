@@ -1,4 +1,4 @@
-#include <assert.h>
+#pragma
 #include <stdlib.h>
 #include <iostream>
 #include <vector>
@@ -16,7 +16,7 @@ public:
 	bool isIdeal() const;
 	bool isEmpty()const;
 
-	Node* getRoot();
+	Node* getRoot() const;
 	Node* addNode(int key);
 
 	int Height(Node* root) const;
