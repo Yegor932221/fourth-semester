@@ -24,6 +24,7 @@ public:
 	int Height() const;
 
 	int NodeCount() const;
+	int NodeCount(Node* root) const;
 
 
 	void printHorizontal(int levelSpacing = 4) const;

@@ -8,7 +8,7 @@ int main() {
 
 	srand(time(0));
 	BinaryTreeTester tester(false, true);
-	tester.test(1000);
+	tester.test(5);
 	BinaryTree tree;
 
 	for(int i=0;i<100;i++) tree.addNode(i);
@@ -18,7 +18,7 @@ int main() {
 	tree.addNode(-5);
 	tree.addNode(-7);
 	tree.addNode(789);
-	//tree.clear(-5);
+	/*tree.remove(50);*/
 	if (tree.searchKey(2)) 
 	{
 		tree.printHorizontal();

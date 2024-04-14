@@ -168,10 +168,25 @@ void BinaryTree::clear(Node* root)
 	delete root;
 }
 
+int BinaryTree::NodeCount(Node* root) const
+{
+	int count, count_l=0, count_r=0;
+	if (root == nullptr) return 0;
+	if (root->getLeft()) 
+	{
+		count_l = NodeCount(root->getLeft());
+	}
+	if (root->getRight())
+	{
+		count_r = NodeCount(root->getRight());
+	}
+	count = 1 + count_l + count_r;
+	return count;
+}
+
 int BinaryTree::NodeCount() const
 {
-	std::vector<Node*> vec= nodesVec() ;
-	return vec.size();
+	return NodeCount(m_root);
 }
 
 int BinaryTree::Height()const
@@ -194,83 +209,76 @@ int BinaryTree::Height(Node* root) const
 
 bool BinaryTree::remove(int key) 
 {
-	std::list<Node*> listTree;
-	listTree.push_back(m_root);
-	_treeToList(listTree);
-	Node* removableNode = searchKey(key);
-	if (!removableNode)
-		return false;
-	Node* replacementNode = nullptr;
-	Node* parentNode = nullptr;
-	Node* parentReplacementNode = nullptr;
-	if (removableNode == m_root)
+	Node* node(searchKey(key));
+	Node* nodeParent = Parent(node);
+	if (node == nullptr)
 	{
-		if (!removableNode->getLeft() && !removableNode->getRight())
+		return false;
+	}
+	
+	if ((node->getLeft() == nullptr) && (node->getRight() == nullptr))
+	{
+		if(nodeParent==nullptr)
 		{
-			delete m_root;
-			m_root = nullptr;
+			delete node;
 			return true;
 		}
-		replacementNode = listTree.back();
-		parentNode = Parent(replacementNode);
-		removableNode->setKey(replacementNode->getKey());
-		if (parentNode->getLeft() == replacementNode)
-			parentNode->setLeft(nullptr);
-		else if (parentNode->getRight() == replacementNode)
-			parentNode->setRight(nullptr);
+		if (nodeParent->getLeft() == node)
+		{
+			nodeParent->setLeft(nullptr);
+		}
+		if (nodeParent->getRight() == node)
+		{
+			nodeParent->setRight(nullptr);
+		}
+		delete node;
+		return true;
+	}
+
+	if (node->getLeft() && node->getRight())
+	{
+		Node* replacementNode = nodesVec().back();
+		Node* parentReplacement = Parent(replacementNode);
+		node->setKey(replacementNode->getKey());
+		if (parentReplacement->getLeft() == replacementNode)
+		{
+			parentReplacement->setLeft(nullptr);
+		}
+		if (parentReplacement->getRight() == replacementNode)
+		{
+			parentReplacement->setRight(nullptr);
+		}
 		delete replacementNode;
 		return true;
 	}
-	else if (!removableNode->getLeft() && !removableNode->getRight())//no childs
+
+	if (node->getRight())
 	{
-		parentNode = Parent(removableNode);
-		if (parentNode->getLeft() == removableNode)
-			parentNode->setLeft(nullptr);
-		else if (parentNode->getRight() == removableNode)
-			parentNode->setRight(nullptr);
-		delete removableNode;
+		Node* replacementNode = node->getRight();
+		node->setKey(replacementNode->getKey());
+
+		node->setLeft(replacementNode->getLeft());
+		node->setRight(replacementNode->getRight());
+
+		replacementNode->setLeft(nullptr);
+		replacementNode->setRight(nullptr);
+		delete replacementNode;
 		return true;
 	}
-	else if (removableNode->getLeft() && removableNode->getRight())
+	if (node->getLeft())
 	{
-		parentNode = Parent(removableNode);
-		std::vector<Node*> vecLeafs = _leafs(removableNode);
-		replacementNode = vecLeafs.back();
-		parentReplacementNode = Parent(replacementNode);
-		if (replacementNode != removableNode->getLeft())
-			replacementNode->setLeft(removableNode->getLeft());
-		if (replacementNode != removableNode->getRight())
-			replacementNode->setRight(removableNode->getRight());
-		if (parentReplacementNode->getLeft() == replacementNode)
-			parentReplacementNode->setLeft(nullptr);
-		else
-			parentReplacementNode->setRight(nullptr);
-		if (parentNode->getLeft() == removableNode)
-			parentNode->setLeft(replacementNode);
-		else if (parentNode->getRight() == removableNode)
-			parentNode->setRight(replacementNode);
-		delete removableNode;
+		Node* replacementNode = node->getLeft();
+		node->setKey(replacementNode->getKey());
+
+		node->setLeft(replacementNode->getLeft());
+		node->setRight(replacementNode->getRight());
+
+		replacementNode->setLeft(nullptr);
+		replacementNode->setRight(nullptr);
+		delete replacementNode;
 		return true;
 	}
-	else
-	{
-		parentNode = Parent(removableNode);
-		if (removableNode->getLeft())
-		{
-			replacementNode = removableNode->getLeft();
-		}
-		else if (removableNode->getRight())
-		{
-			replacementNode = removableNode->getRight();
-		}
-		if (parentNode->getLeft() == removableNode)
-			parentNode->setLeft(replacementNode);
-		else if (parentNode->getRight() == removableNode)
-			parentNode->setRight(replacementNode);
-		delete removableNode;
-		return true;
-	}
-	return false;
+	
 }
 
 BinaryTree::Node* BinaryTree::searchKey(int key)
@@ -377,11 +385,13 @@ std::vector<BinaryTree::Node*> BinaryTree::nodesVec(Node* root) const
 		return unprocessedNodes;
 	}
 	std::vector<Node*> Nodes;
-	std::list<Node*> unprocessedNodes(1, root);
+	std::list<Node*> unprocessedNodes;
+	unprocessedNodes.push_back(root);
 	while (!unprocessedNodes.empty()) 
 	{
 		Node* node = unprocessedNodes.front();
 		Nodes.push_back(node);
+		;
 		if (node->getLeft()) 
 		{
 			unprocessedNodes.push_back(node->getLeft());
@@ -462,6 +472,7 @@ BinaryTree::Node* BinaryTree::Parent(Node* root) const
 	while (!unprocessedNodes.empty())
 	{
 		Node* node = unprocessedNodes.front();
+		if (node == nullptr) return nullptr;
 		if (node->getLeft())
 		{
 			if (node->getLeft() == root)
@@ -497,12 +508,20 @@ std::vector<BinaryTree::Node*> BinaryTree::leafs() const
 	std::list<Node*> nodeList;
 	std::vector<Node*> leafs;
 	nodeList.push_back(m_root);
-	_treeToList(nodeList);
 	while (!nodeList.empty())
 	{
-		if (!nodeList.front()->getLeft() && !nodeList.front()->getRight())
+		Node* node = nodeList.front();
+		if (!(node->getLeft()) && !(node->getRight()))
 		{
-			leafs.push_back(nodeList.front());
+			leafs.push_back(node);
+		}
+		if (node->getLeft())
+		{
+			nodeList.push_back(node->getLeft());
+		}
+		if (node->getRight())
+		{
+			nodeList.push_back(node->getRight());
 		}
 		nodeList.pop_front();
 	}
@@ -514,12 +533,20 @@ std::vector<BinaryTree::Node*> BinaryTree::_leafs(Node* root) const
 	std::list<Node*> nodeList;
 	std::vector<Node*> leafs;
 	nodeList.push_back(root);
-	_treeToList(nodeList);
 	while (!nodeList.empty())
 	{
-		if (!nodeList.front()->getLeft() && !nodeList.front()->getRight())
+		Node* node = nodeList.front();
+		if (!(node->getLeft()) && !(node->getRight()))
 		{
-			leafs.push_back(nodeList.front());
+			leafs.push_back(node);
+		}
+		if (node->getLeft())
+		{
+			nodeList.push_back(node->getLeft());
+		}
+		if (node->getRight())
+		{
+			nodeList.push_back(node->getRight());
 		}
 		nodeList.pop_front();
 	}
@@ -537,24 +564,20 @@ void BinaryTree::printLeafs() const
 
 void BinaryTree::_treeToList(std::list<Node*>& nodeList) const 
 {
-	Node* current = nullptr;
-	std::list<Node*> tmp;
-	tmp = nodeList;
-	while (!tmp.empty())
+	std::list<Node*> nodes;
+	nodes.push_back(m_root);
+	while (!nodes.empty())
 	{
-		if (tmp.front())
+		Node* node = nodes.front();
+		if (node->getLeft())
 		{
-			current = tmp.front();
-			if (current->getLeft()) {
-				nodeList.push_back(current->getLeft());
-				tmp.push_back(current->getLeft());
-			}
-			if (current->getRight()) {
-				nodeList.push_back(current->getRight());
-				tmp.push_back(current->getRight());
-			}
+			nodes.push_back(node->getLeft());
 		}
-		tmp.pop_front();
+		if (node->getRight())
+		{
+			nodes.push_back(node->getRight());
+		}
+		nodeList.push_back(node);
+		nodes.pop_front();
 	}
-
 }
