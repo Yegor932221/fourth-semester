@@ -1,7 +1,8 @@
-#pragma
+#pragma once
 #include <stdlib.h>
 #include <iostream>
 #include <vector>
+#include <list>
 
 class BinaryTree
 {
@@ -23,7 +24,7 @@ public:
 	int Height() const;
 
 	int NodeCount() const;
-	int NodeCount(Node* root) const;
+
 
 	void printHorizontal(int levelSpacing = 4) const;
 	void printHorizontal(Node* root, int marginLeft, int levelSpacing) const;
@@ -47,14 +48,22 @@ public:
 	bool isBalanced(Node* root);
 	bool isBalanced();
 
-	std::vector<Node*> nodesVec();
-	std::vector<Node*> nodesVec(Node* root);
-	std::vector<int> keysVec();
+	std::vector<Node*> nodesVec() const;
+	std::vector<Node*> nodesVec(Node* root) const;
+	std::vector<int> keysVec() const;
 
 	int level(int key);
 	int level(Node* root, int key);
 
-	Node* Parent(Node* root);
+	Node* Parent(Node* root) const;
+	BinaryTree& operator=(const BinaryTree& other);
+
+	std::vector<Node*> leafs() const;
+	std::vector<Node*> _leafs(Node* root) const;
+
+	void printLeafs() const;
+
+	void _treeToList(std::list<Node*>& nodeList) const;
 private:
 	Node* addNode(Node* root, int key);
 	Node* _clone() const;
