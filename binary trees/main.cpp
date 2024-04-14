@@ -11,14 +11,15 @@ int main() {
 	tester.test(5);
 	BinaryTree tree;
 
-	for(int i=0;i<100;i++) tree.addNode(i);
-	tree.addNode(-2);
-	tree.addNode(-412);
-	tree.addNode(312);
-	tree.addNode(-5);
-	tree.addNode(-7);
-	tree.addNode(789);
-	/*tree.remove(50);*/
+	//for(int i=0;i<100;i++) tree.addNode(i);
+	//tree.addNode(-2);
+	//tree.addNode(-412);
+	//tree.addNode(312);
+	///*tree.addNode(-5);
+	//tree.addNode(-7);*/
+	//tree.addNode(789);
+	///*tree.remove(50);*/
+	std::cout << std::endl << "Count:" << tree.NodeCount();
 	if (tree.searchKey(2)) 
 	{
 		tree.printHorizontal();
@@ -39,7 +40,7 @@ int main() {
 	}
 
 	std::vector<BinaryTree::Node*> nodes=tree.nodesVec();
-	std::cout << std::endl << "Third:" <<nodes[2]->getKey() << std::endl;
+	/*std::cout << std::endl << "Third:" <<nodes[2]->getKey() << std::endl;*/
 	std::vector<int> keys = tree.keysVec();
 	std::cout << "Sorted:";
 	for (int i = 0; i < keys.size(); i++)
@@ -48,9 +49,9 @@ int main() {
 	}
 	std::cout <<std::endl <<"Level 82:"<< tree.level(82)<<std::endl;
 
-	int key;
-	key = (tree.Parent(tree.searchKey(2)))->getKey();
-	std::cout << std::endl << "Parent of 2:" <<key << std::endl;
+	/*int key;*/
+	/*key = (tree.Parent(tree.searchKey(2)))->getKey();*/
+	/*std::cout << std::endl << "Parent of 2:" <<key << std::endl;*/
 
 	if(tree.remove(6)) tree.printHorizontal();
 }

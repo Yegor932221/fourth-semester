@@ -172,11 +172,11 @@ int BinaryTree::NodeCount(Node* root) const
 {
 	int count, count_l=0, count_r=0;
 	if (root == nullptr) return 0;
-	if (root->getLeft()) 
+	if (root->getLeft()!= nullptr) 
 	{
 		count_l = NodeCount(root->getLeft());
 	}
-	if (root->getRight())
+	if (root->getRight()!= nullptr)
 	{
 		count_r = NodeCount(root->getRight());
 	}
@@ -209,76 +209,115 @@ int BinaryTree::Height(Node* root) const
 
 bool BinaryTree::remove(int key) 
 {
-	Node* node(searchKey(key));
-	Node* nodeParent = Parent(node);
-	if (node == nullptr)
-	{
+	Node* node = searchKey(key);
+	if (!node)
 		return false;
-	}
-	
-	if ((node->getLeft() == nullptr) && (node->getRight() == nullptr))
-	{
-		if(nodeParent==nullptr)
-		{
-			delete node;
-			return true;
-		}
-		if (nodeParent->getLeft() == node)
-		{
-			nodeParent->setLeft(nullptr);
-		}
-		if (nodeParent->getRight() == node)
-		{
-			nodeParent->setRight(nullptr);
-		}
-		delete node;
-		return true;
-	}
+	Node* replacementNode = nullptr;
+	Node* nodeParent = Parent(node);
+	Node* parentReplacementNode = nullptr;
 
 	if (node->getLeft() && node->getRight())
 	{
-		Node* replacementNode = nodesVec().back();
-		Node* parentReplacement = Parent(replacementNode);
-		node->setKey(replacementNode->getKey());
-		if (parentReplacement->getLeft() == replacementNode)
+		replacementNode = nodesVec().back();
+		parentReplacementNode = Parent(replacementNode);
+		if (parentReplacementNode == node)
 		{
-			parentReplacement->setLeft(nullptr);
+			if (replacementNode == node->getLeft())
+			{
+				replacementNode->setRight(node->getLeft());
+			}
+			else
+			{
+				replacementNode->setLeft(node->getRight());
+			}
 		}
-		if (parentReplacement->getRight() == replacementNode)
+		else
 		{
-			parentReplacement->setRight(nullptr);
+			replacementNode->setLeft(node->getLeft());
+			replacementNode->setRight(node->getRight());
+		}
+		if (parentReplacementNode->getLeft() == replacementNode)
+		{
+			parentReplacementNode->setLeft(nullptr);
+		}
+		if (parentReplacementNode->getRight() == replacementNode)
+		{
+			parentReplacementNode->setRight(nullptr);
+		}
+		if (nodeParent->getLeft() == node)
+		{
+			nodeParent->setLeft(replacementNode);
+		}
+		if (nodeParent->getRight() == node)
+		{
+			nodeParent->setRight(replacementNode);
+		}
+			delete node;
+		return true;
+	}
+	if (node == m_root)
+	{
+		if (!node->getLeft() && !node->getRight())
+		{
+			delete m_root;
+			m_root = nullptr;
+			return true;
+		}
+		replacementNode = nodesVec().back();
+		node->setKey(replacementNode->getKey());
+		parentReplacementNode = Parent(replacementNode);
+		if (parentReplacementNode->getRight() == replacementNode)
+		{
+			parentReplacementNode->setRight(nullptr);
+		}
+		if (parentReplacementNode->getLeft() == replacementNode)
+		{
+			parentReplacementNode->setLeft(nullptr);
 		}
 		delete replacementNode;
 		return true;
 	}
-
-	if (node->getRight())
+	 if (!node->getLeft() && !node->getRight())
 	{
-		Node* replacementNode = node->getRight();
-		node->setKey(replacementNode->getKey());
-
-		node->setLeft(replacementNode->getLeft());
-		node->setRight(replacementNode->getRight());
-
-		replacementNode->setLeft(nullptr);
-		replacementNode->setRight(nullptr);
-		delete replacementNode;
-		return true;
+		 if (nodeParent->getRight() == node)
+		 {
+			 nodeParent->setRight(nullptr);
+		 }
+		 if (nodeParent->getLeft() == node)
+		 {
+			 nodeParent->setLeft(nullptr);
+		 }
+		 delete node;
+		 return true;
 	}
-	if (node->getLeft())
-	{
-		Node* replacementNode = node->getLeft();
-		node->setKey(replacementNode->getKey());
-
-		node->setLeft(replacementNode->getLeft());
-		node->setRight(replacementNode->getRight());
-
-		replacementNode->setLeft(nullptr);
-		replacementNode->setRight(nullptr);
-		delete replacementNode;
-		return true;
-	}
-	
+	 if (node->getLeft()) 
+	 {
+			replacementNode = node->getLeft();
+		 if (nodeParent->getLeft() == node)
+		 {
+			nodeParent->setLeft(replacementNode);
+		 }
+		 if (nodeParent->getRight() == node)
+		 {
+			 nodeParent->setRight(replacementNode);
+		 }
+		delete node;
+		 return true;
+	 }
+	 if (node->getRight())
+	 {
+		 replacementNode = node->getRight();
+		 if (nodeParent->getLeft() == node)
+		 {
+			 nodeParent->setLeft(replacementNode);
+		 }
+		 if (nodeParent->getRight() == node)
+		 {
+			 nodeParent->setRight(replacementNode);
+		 }
+		 delete node;
+		 return true;
+	 }
 }
 
 BinaryTree::Node* BinaryTree::searchKey(int key)
@@ -347,7 +386,7 @@ int BinaryTree::Min() const
 
 bool BinaryTree::isBalanced(Node* root)
 {
-	if (root != nullptr)
+	if (root == nullptr)
 	{
 		return true;
 	}
@@ -391,7 +430,6 @@ std::vector<BinaryTree::Node*> BinaryTree::nodesVec(Node* root) const
 	{
 		Node* node = unprocessedNodes.front();
 		Nodes.push_back(node);
-		;
 		if (node->getLeft()) 
 		{
 			unprocessedNodes.push_back(node->getLeft());
