@@ -215,7 +215,28 @@ bool BinaryTree::remove(int key)
 	Node* replacementNode = nullptr;
 	Node* nodeParent = Parent(node);
 	Node* parentReplacementNode = nullptr;
-
+	if (node == m_root)
+	{
+		if (!node->getLeft() && !node->getRight())
+		{
+			delete m_root;
+			m_root = nullptr;
+			return true;
+		}
+		replacementNode = nodesVec().back();
+		node->setKey(replacementNode->getKey());
+		parentReplacementNode = Parent(replacementNode);
+		if (parentReplacementNode->getRight() == replacementNode)
+		{
+			parentReplacementNode->setRight(nullptr);
+		}
+		if (parentReplacementNode->getLeft() == replacementNode)
+		{
+			parentReplacementNode->setLeft(nullptr);
+		}
+		delete replacementNode;
+		return true;
+	}
 	if (node->getLeft() && node->getRight())
 	{
 		replacementNode = nodesVec().back();
@@ -255,28 +276,7 @@ bool BinaryTree::remove(int key)
 			delete node;
 		return true;
 	}
-	if (node == m_root)
-	{
-		if (!node->getLeft() && !node->getRight())
-		{
-			delete m_root;
-			m_root = nullptr;
-			return true;
-		}
-		replacementNode = nodesVec().back();
-		node->setKey(replacementNode->getKey());
-		parentReplacementNode = Parent(replacementNode);
-		if (parentReplacementNode->getRight() == replacementNode)
-		{
-			parentReplacementNode->setRight(nullptr);
-		}
-		if (parentReplacementNode->getLeft() == replacementNode)
-		{
-			parentReplacementNode->setLeft(nullptr);
-		}
-		delete replacementNode;
-		return true;
-	}
+	
 	 if (!node->getLeft() && !node->getRight())
 	{
 		 if (nodeParent->getRight() == node)
