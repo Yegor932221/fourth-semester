@@ -24,7 +24,6 @@ public:
 	int Height() const;
 
 	int NodeCount() const;
-	int NodeCount(Node* root) const;
 
 
 	void printHorizontal(int levelSpacing = 4) const;
@@ -65,11 +64,10 @@ public:
 	void printLeafs() const;
 
 	void _treeToList(std::list<Node*>& nodeList) const;
-	Node* _clone() const;
-	Node* _clone(Node* root) const;
 private:
 	Node* addNode(Node* root, int key);
-	
+	Node* _clone() const;
+	Node* _clone(Node* root) const;
 private:
 	Node* m_root = nullptr;
 };
