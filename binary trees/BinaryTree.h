@@ -34,7 +34,7 @@ public:
 	BinaryTree clone(Node* root) const;
 
 	void clear();
-	bool remove(int key);
+	virtual bool remove(int key);
 
 	void clear(Node* root);
 	Node* searchKey(int key);

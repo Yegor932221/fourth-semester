@@ -15,7 +15,7 @@ Binary_Search_Tree::~Binary_Search_Tree()
 	clear();
 }
 
-Binary_Search_Tree::Node* Binary_Search_Tree::addNode(int key)
+BinaryTree::Node* Binary_Search_Tree::addNode(int key)
 {
 	if (m_root)
 	{
@@ -27,7 +27,7 @@ Binary_Search_Tree::Node* Binary_Search_Tree::addNode(int key)
 	}
 }
 
-Binary_Search_Tree::Node* Binary_Search_Tree::addNode(Node* root,int key)
+BinaryTree::Node* Binary_Search_Tree::addNode(Node* root,int key)
 {
 	if (!root)
 	{
@@ -97,7 +97,7 @@ int Binary_Search_Tree::max(Node* root)
 	return address_max(root)->getKey();
 }
 
-Binary_Search_Tree::Node* Binary_Search_Tree::address_max(Node* root)
+BinaryTree::Node* Binary_Search_Tree::address_max(Node* root)
 {
 	if (root->getRight())
 	{
@@ -112,7 +112,7 @@ int Binary_Search_Tree::max()
 	return address_max()->getKey();
 }
 
-Binary_Search_Tree::Node* Binary_Search_Tree::address_max()
+BinaryTree::Node* Binary_Search_Tree::address_max()
 {
 	return address_max(m_root);
 }
@@ -123,7 +123,7 @@ int Binary_Search_Tree::min(Node* root)
 	return address_min(root)->getKey();
 }
 
-Binary_Search_Tree::Node* Binary_Search_Tree::address_min(Node* root)
+BinaryTree::Node* Binary_Search_Tree::address_min(Node* root)
 {
 	if (root->getLeft())
 	{
@@ -138,7 +138,241 @@ int Binary_Search_Tree::min()
 	return address_min()->getKey();
 }
 
-Binary_Search_Tree::Node* Binary_Search_Tree::address_min()
+BinaryTree::Node* Binary_Search_Tree::address_min()
 {
 	return address_min(m_root);
+}
+
+void Binary_Search_Tree::keysVec(Node* root, std::vector<int>& keys) const
+{
+	if (!root) {
+		return;
+	}
+	keysVec(root->getLeft(),keys);
+	keys.push_back(root->getKey());
+	keysVec(root->getRight(),keys);
+}
+
+std::vector<int> Binary_Search_Tree::keysVec(Node* root) const
+{
+	std::vector<int> keys;
+	keysVec(root, keys);
+	return keys;
+}
+
+std::vector<int> Binary_Search_Tree::keysVec() const
+{
+	return keysVec(m_root);
+}
+
+BinaryTree::Node* Binary_Search_Tree::searchKey(Node* root,int key) const
+{
+	if (!root) {
+		return nullptr;
+	}
+	else
+	{
+		if (root->getKey() == key)
+		{
+			return root;
+		}
+		else
+		{
+			if (root->getKey() > key)
+			{
+				return searchKey(root->getLeft(), key);
+			}
+			else
+			{
+				if (root->getKey() < key)
+				{
+					return searchKey(root->getRight(), key);
+				}
+			}
+		}
+	}
+}
+
+BinaryTree::Node* Binary_Search_Tree::searchKey(int key) const
+{
+	return searchKey(m_root, key);
+}
+
+bool Binary_Search_Tree::remove(int key)
+{
+	Node* node = searchKey(key);
+	if (!node)
+		return false;
+	Node* replacementNode = nullptr;
+	Node* nodeParent = Parent(node);
+	Node* parentReplacementNode = nullptr;
+	if (node == m_root)
+	{
+		if (!node->getLeft() && !node->getRight())
+		{
+			delete m_root;
+			m_root = nullptr;
+			return true;
+		}
+		replacementNode = address_max(node->getLeft());
+		node->setKey(replacementNode->getKey());
+		parentReplacementNode = Parent(replacementNode);
+		if (parentReplacementNode->getRight() == replacementNode)
+		{
+			parentReplacementNode->setRight(nullptr);
+		}
+		if (parentReplacementNode->getLeft() == replacementNode)
+		{
+			parentReplacementNode->setLeft(nullptr);
+		}
+		delete replacementNode;
+		return true;
+	}
+	if (node->getLeft() && node->getRight())
+	{
+		replacementNode = address_max(node->getLeft());
+		parentReplacementNode = Parent(replacementNode);
+		if (parentReplacementNode == node)
+		{
+			if (replacementNode == node->getLeft())
+			{
+				node->setKey(replacementNode->getKey());
+				node->setLeft(replacementNode->getLeft());
+				replacementNode->setLeft(nullptr);
+				delete replacementNode;
+				return true;
+			}
+		}
+		else
+		{
+			replacementNode->setLeft(node->getLeft());
+			replacementNode->setRight(node->getRight());
+		}
+		if (parentReplacementNode->getLeft() == replacementNode)
+		{
+			parentReplacementNode->setLeft(nullptr);
+		}
+		if (parentReplacementNode->getRight() == replacementNode)
+		{
+			parentReplacementNode->setRight(nullptr);
+		}
+		if (nodeParent->getLeft() == node)
+		{
+			nodeParent->setLeft(replacementNode);
+		}
+		if (nodeParent->getRight() == node)
+		{
+			nodeParent->setRight(replacementNode);
+		}
+		delete node;
+		return true;
+	}
+
+	if (!node->getLeft() && !node->getRight())
+	{
+		if (nodeParent->getRight() == node)
+		{
+			nodeParent->setRight(nullptr);
+		}
+		if (nodeParent->getLeft() == node)
+		{
+			nodeParent->setLeft(nullptr);
+		}
+		delete node;
+		return true;
+	}
+	if (node->getLeft())
+	{
+		replacementNode = node->getLeft();
+		if (nodeParent->getLeft() == node)
+		{
+			nodeParent->setLeft(replacementNode);
+		}
+		if (nodeParent->getRight() == node)
+		{
+			nodeParent->setRight(replacementNode);
+		}
+		delete node;
+		return true;
+	}
+	if (node->getRight())
+	{
+		replacementNode = node->getRight();
+		if (nodeParent->getLeft() == node)
+		{
+			nodeParent->setLeft(replacementNode);
+		}
+		if (nodeParent->getRight() == node)
+		{
+			nodeParent->setRight(replacementNode);
+		}
+		delete node;
+		return true;
+	}
+}
+
+BinaryTree::Node* Binary_Search_Tree::Parent(Node* root) const
+{
+	std::list<Node*> unprocessedNodes;
+	unprocessedNodes.push_back(m_root);
+	while (!unprocessedNodes.empty())
+	{
+		Node* node = unprocessedNodes.front();
+		if (node == nullptr) return nullptr;
+		if (node->getLeft())
+		{
+			if (node->getLeft() == root)
+			{
+				return node;
+			}
+			unprocessedNodes.push_back(node->getLeft());
+		}
+		if (node->getRight())
+		{
+			if (node->getRight() == root)
+			{
+				return node;
+			}
+			unprocessedNodes.push_back(node->getRight());
+		}
+		unprocessedNodes.pop_front();
+	}
+	return nullptr;
+}
+
+int Binary_Search_Tree::level(Node* node, Node* root) const
+{
+	if (!node) {
+		return -1;
+	}
+	else
+	{
+		if (root->getKey() == node->getKey())
+		{
+			return 1;
+		}
+		else
+		{
+			if (root->getKey() > node->getKey())
+			{
+				int Level = level(node, root->getLeft());
+				if (Level != -1) return (Level + 1);
+				else return -1;
+			}
+			else
+			{
+				if (root->getKey() < node->getKey())
+				{
+					int Level = level(node, root->getRight());
+					if (Level != -1) return (Level + 1);
+					else return -1;
+				}
+			}
+		}
+	}
+}
+
+int Binary_Search_Tree::level(Node* node) const
+{
+	return level(node, m_root);
 }

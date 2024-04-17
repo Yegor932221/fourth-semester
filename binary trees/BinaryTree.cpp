@@ -245,11 +245,11 @@ bool BinaryTree::remove(int key)
 		{
 			if (replacementNode == node->getLeft())
 			{
-				replacementNode->setRight(node->getLeft());
+				replacementNode->setRight(node->getRight());
 			}
 			else
 			{
-				replacementNode->setLeft(node->getRight());
+				replacementNode->setLeft(node->getLeft());
 			}
 		}
 		else

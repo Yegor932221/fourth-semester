@@ -26,6 +26,19 @@ public:
 	Node* address_min(Node* root);
 	int min();
 	Node* address_min();
+
+	void keysVec(Node* root, std::vector<int>& keys) const;
+	std::vector<int> keysVec(Node* root) const;
+	std::vector<int> keysVec() const;
+	Node* searchKey(Node* root, int key) const;
+	Node* searchKey(int key) const;
+
+	bool remove(int key);
+	Node* Parent(Node* root) const;
+
+	int level(Node* node, Node* root) const;
+	int level(Node* node) const;
+
 private:
 	Node* m_root = nullptr;
 };
