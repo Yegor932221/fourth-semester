@@ -66,3 +66,79 @@ void Binary_Search_Tree::printHorizontal(Node* root, int marginLeft, int levelSp
 	std::cout << std::string(marginLeft, ' ') << root->getKey() << std::endl;
 	printHorizontal(root->getLeft(), marginLeft + levelSpacing, levelSpacing);
 }
+
+Binary_Search_Tree Binary_Search_Tree::clone() const
+{
+	return clone(m_root);
+}
+
+Binary_Search_Tree Binary_Search_Tree::clone(Node* root) const
+{
+	Binary_Search_Tree clone;
+	if (root == nullptr)
+	{
+		return clone;
+	}
+	clone.m_root = _clone(root);
+	return clone;
+}
+
+Binary_Search_Tree& Binary_Search_Tree::operator=(const Binary_Search_Tree& other)
+{
+	if (m_root == other.m_root)
+		return *this;
+	clear();
+	m_root = other._clone(other.m_root);
+	return*this;
+}
+
+int Binary_Search_Tree::max(Node* root)
+{
+	return address_max(root)->getKey();
+}
+
+Binary_Search_Tree::Node* Binary_Search_Tree::address_max(Node* root)
+{
+	if (root->getRight())
+	{
+	return address_max(root->getRight());
+	}
+	return root;
+	
+}
+
+int Binary_Search_Tree::max()
+{
+	return address_max()->getKey();
+}
+
+Binary_Search_Tree::Node* Binary_Search_Tree::address_max()
+{
+	return address_max(m_root);
+}
+
+
+int Binary_Search_Tree::min(Node* root)
+{
+	return address_min(root)->getKey();
+}
+
+Binary_Search_Tree::Node* Binary_Search_Tree::address_min(Node* root)
+{
+	if (root->getLeft())
+	{
+		return address_min(root->getLeft());
+	}
+	return root;
+
+}
+
+int Binary_Search_Tree::min()
+{
+	return address_min()->getKey();
+}
+
+Binary_Search_Tree::Node* Binary_Search_Tree::address_min()
+{
+	return address_min(m_root);
+}

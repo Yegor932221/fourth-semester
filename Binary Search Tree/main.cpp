@@ -10,9 +10,8 @@ int main() {
 	for (int i = 0; i < 5; i++)
 	{
 		tree.addNode(i * 10);
-		/*tree.printHorizontal();*/
 	}
-		tree.addNode(-9);
+	tree.addNode(-9);
 	tree.addNode(-6);
 	tree.addNode(-55);
 	tree.addNode(-3);
@@ -20,7 +19,7 @@ int main() {
 	tree.addNode(31);
 	tree.addNode(22);
 	tree.printHorizontal();
-	
-
+	std::cout << "Max: " << tree.max()<<std::endl;
+	std::cout << "Min: " << tree.min()<<std::endl;
 	/*tree.printHorizontal();*/
 }

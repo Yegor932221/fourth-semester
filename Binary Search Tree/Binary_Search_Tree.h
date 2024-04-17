@@ -14,6 +14,18 @@ public:
 	Node* addNode(Node* root,int key);
 	void printHorizontal(int levelSpacing=4) const;
 	void printHorizontal(Node* root, int marginLeft, int levelSpacing) const;
+	Binary_Search_Tree clone() const;
+	Binary_Search_Tree clone(Node* root) const;
+	Binary_Search_Tree& operator=(const Binary_Search_Tree& other);
+	int max(Node* root);
+	Node* address_max(Node* root);
+	int max();
+	Node* address_max();
+
+	int min(Node* root);
+	Node* address_min(Node* root);
+	int min();
+	Node* address_min();
 private:
 	Node* m_root = nullptr;
 };
