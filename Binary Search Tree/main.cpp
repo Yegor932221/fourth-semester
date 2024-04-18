@@ -14,7 +14,11 @@ int main() {
 	tree.addNode(-9);
 	tree.addNode(-6);
 	tree.addNode(-55);
+	tree.addNode(-66);
 	tree.addNode(-3);
+	tree.addNode(-12);
+	tree.addNode(-15);
+	tree.addNode(-4);
 	tree.addNode(33);
 	tree.addNode(31);
 	tree.addNode(22);
@@ -25,26 +29,36 @@ int main() {
 	std::cout << "Parent of 20: " << tree.Parent(tree.searchKey(20))->getKey() << std::endl;
 		
 
-	keys = tree.keysVec();
+	/*keys = tree.keysVec();
 	for (int i = 0; i < keys.size(); i++)
 	{
 		std::cout <<keys[i] <<" ";
-	}
+	}*/
+	
+	tree.printHorizontal();
+
+
+	std::cout << std::endl << "===========" << std::endl;
 	std::cout << std::endl;
 	tree.remove(-9);
 	tree.printHorizontal();
-	
-	std::cout << std::endl;
+
+	std::cout<<std::endl <<"===========" << std::endl;
 	tree.remove(0);
 	tree.printHorizontal();
 
+	std::cout << std::endl << "===========" << std::endl;
 	std::cout << std::endl;
 	tree.remove(22);
 	tree.printHorizontal();
 
+	std::cout << std::endl << "===========" << std::endl;
 	std::cout << std::endl;
 	tree.remove(33);
 	tree.printHorizontal();
+
+
+	
 	/*for (int i = 0; i < keys.size(); i++)
 	{
 		int key = keys[i];

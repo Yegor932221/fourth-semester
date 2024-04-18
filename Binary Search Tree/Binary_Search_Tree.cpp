@@ -217,6 +217,14 @@ bool Binary_Search_Tree::remove(int key)
 		replacementNode = address_max(node->getLeft());
 		node->setKey(replacementNode->getKey());
 		parentReplacementNode = Parent(replacementNode);
+		if (replacementNode->getLeft())
+		{
+			node->setKey(replacementNode->getKey());
+			parentReplacementNode->setRight(replacementNode->getLeft());
+			replacementNode->setLeft(nullptr);
+			delete replacementNode;
+			return true;
+		}
 		if (parentReplacementNode->getRight() == replacementNode)
 		{
 			parentReplacementNode->setRight(nullptr);
@@ -245,6 +253,13 @@ bool Binary_Search_Tree::remove(int key)
 		}
 		else
 		{
+			if (replacementNode->getLeft())
+			{
+				parentReplacementNode->setRight(replacementNode->getLeft());
+				node->setKey(replacementNode->getKey());
+				delete replacementNode;
+				return true;
+			}
 			replacementNode->setLeft(node->getLeft());
 			replacementNode->setRight(node->getRight());
 		}
