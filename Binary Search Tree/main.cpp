@@ -2,9 +2,13 @@
 #include <iostream>
 #include <vector>
 #include "Binary_Search_Tree.h"
+#include "SearchTreeTester.h"
 //#include"BinaryTreeTester.h"
 
 int main() {
+
+	SearchTreeTester tester(false, true);
+	tester.test(100);
 	Binary_Search_Tree tree;
 	std::vector<int> keys;
 	for (int i = 0; i < 5; i++)
