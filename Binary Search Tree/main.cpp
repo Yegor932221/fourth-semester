@@ -16,19 +16,19 @@ int main() {
 	{
 		tree.addNode(i * 10);
 	}
-	//tree.addNode(-9);
-	//tree.addNode(-6);
-	//tree.addNode(-55);
-	//tree.addNode(-66);
-	//tree.addNode(-3);
-	//tree.addNode(-12);
-	//tree.addNode(-15);
-	//tree.addNode(-4);
-	//tree.addNode(33);
-	//tree.addNode(31);
-	//tree.addNode(22);
+	tree.addNode(-9);
+	tree.addNode(-6);
+	tree.addNode(-55);
+	tree.addNode(-66);
+	tree.addNode(-3);
+	tree.addNode(-12);
+	tree.addNode(-15);
+	tree.addNode(-4);
+	tree.addNode(33);
+	tree.addNode(31);
+	tree.addNode(22);
 
-	tree.printHorizontal(6);
+	tree.printHorizontal();
 
 	std::cout << "Node count: " << tree.nodeCount() << std::endl;
 	std::cout << "Max: " << tree.max()<<std::endl;

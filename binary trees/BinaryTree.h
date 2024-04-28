@@ -69,7 +69,7 @@ public:
 private:
 	Node* addNode(Node* root, int key);
 	
-private:
+protected:
 	Node* m_root = nullptr;
 };
 

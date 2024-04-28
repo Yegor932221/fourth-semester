@@ -39,7 +39,6 @@ public:
 	int level(Node* node, Node* root) const;
 	int level(Node* node) const;
 
-private:
-	Node* m_root = nullptr;
+
 };
 
