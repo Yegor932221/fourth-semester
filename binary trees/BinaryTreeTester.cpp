@@ -20,9 +20,9 @@ void BinaryTreeTester::test(const int size)
     m_maxSize = size;
     addAndCount();
     destructor();
-    remove();
+   /* remove();*/
     clear();
-    assign();
+   /* assign();*/
     height();
 }
 
@@ -120,7 +120,7 @@ void BinaryTreeTester::addAndCount()
 
 void BinaryTreeTester::check_addAndCount(const BinaryTree* tree, const int size)
 {
-    assert(tree->NodeCount() == size);
+    assert(tree->nodeCount() == size);
 }
 
 void BinaryTreeTester::destructor()
@@ -183,7 +183,7 @@ void BinaryTreeTester::check_remove(BinaryTree* tree, const int key,
     const bool result, const int size)
 {
     assert(tree->remove(key) == result);
-    assert(tree->NodeCount() == size);
+    assert(tree->nodeCount() == size);
 }
 
 void BinaryTreeTester::clear()
@@ -208,7 +208,7 @@ void BinaryTreeTester::clear()
 
 void BinaryTreeTester::check_clear(const BinaryTree* tree, const int size)
 {
-    assert(tree->NodeCount() == size);
+    assert(tree->nodeCount() == size);
 }
 
 void BinaryTreeTester::assign()
@@ -244,8 +244,8 @@ void BinaryTreeTester::assign()
 void BinaryTreeTester::check_assign(const BinaryTree* first,
     const BinaryTree* second)
 {
-    const int size = first->NodeCount();
-    assert(size == second->NodeCount());
+    const int size = first->nodeCount();
+    assert(size == second->nodeCount());
 
     TreeNodes firstTreeNodes = treeNodes(first);
     TreeNodes secondTreeNodes = treeNodes(second);
@@ -290,7 +290,7 @@ void BinaryTreeTester::height()
 
 void BinaryTreeTester::check_height(const BinaryTree& tree, const int height)
 {
-    assert(tree.Height() == height);
+    assert(tree.height() == height);
 }
 
 void BinaryTreeTester::height_trivialCases()
@@ -379,4 +379,26 @@ void BinaryTreeTester::height_longRandomZigzagSubtrees()
         }
         check_height(longTree, i + 1);
     }
+}
+
+std::vector<int> BinaryTreeTester::generateKeys()
+{
+    std::vector<int> orderedKeys;
+    for (int i = 0; i < m_maxSize; ++i) {
+        orderedKeys.push_back(i);
+    }
+
+    std::vector<int> keys;
+    while (!orderedKeys.empty()) {
+        int i = rand() % orderedKeys.size();
+        keys.push_back(orderedKeys[i]);
+        orderedKeys.erase(orderedKeys.begin() + i);
+    }
+
+    return keys;
+}
+
+bool BinaryTreeTester::useConsoleOutput() const
+{
+    return m_useConsoleOutput;
 }

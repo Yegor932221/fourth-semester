@@ -50,38 +50,38 @@ BinaryTree::Node* Binary_Search_Tree::addNode(Node* root,int key)
 	}
 	return root;
 }
-
-void Binary_Search_Tree::printHorizontal(int levelSpacing	) const
-{
-	printHorizontal(m_root, 0, levelSpacing);
-}
-
-void Binary_Search_Tree::printHorizontal(Node* root, int marginLeft, int levelSpacing) const
-{
-	if (root == nullptr)
-	{
-		return;
-	}
-	printHorizontal(root->getRight(), marginLeft + levelSpacing, levelSpacing);
-	std::cout << std::string(marginLeft, ' ') << root->getKey() << std::endl;
-	printHorizontal(root->getLeft(), marginLeft + levelSpacing, levelSpacing);
-}
-
-Binary_Search_Tree Binary_Search_Tree::clone() const
-{
-	return clone(m_root);
-}
-
-Binary_Search_Tree Binary_Search_Tree::clone(Node* root) const
-{
-	Binary_Search_Tree clone;
-	if (root == nullptr)
-	{
-		return clone;
-	}
-	clone.m_root = _clone(root);
-	return clone;
-}
+//
+//void Binary_Search_Tree::printHorizontal(int levelSpacing	) const 
+//{
+//	printHorizontal(m_root, 0, levelSpacing);
+//}
+//
+//void Binary_Search_Tree::printHorizontal(Node* root, int marginLeft, int levelSpacing) const 
+//{
+//	if (root == nullptr)
+//	{
+//		return;
+//	}
+//	printHorizontal(root->getRight(), marginLeft + levelSpacing, levelSpacing);
+//	std::cout << std::string(marginLeft, ' ') << root->getKey() << std::endl;
+//	printHorizontal(root->getLeft(), marginLeft + levelSpacing, levelSpacing);
+//}
+//
+//Binary_Search_Tree Binary_Search_Tree::clone() const
+//{
+//	return clone(m_root);
+//}
+//
+//Binary_Search_Tree Binary_Search_Tree::clone(Node* root) const
+//{
+//	Binary_Search_Tree clone;
+//	if (root == nullptr)
+//	{
+//		return clone;
+//	}
+//	clone.m_root = _clone(root);
+//	return clone;
+//}
 
 Binary_Search_Tree& Binary_Search_Tree::operator=(const Binary_Search_Tree& other)
 {
@@ -148,9 +148,9 @@ void Binary_Search_Tree::keysVec(Node* root, std::vector<int>& keys) const
 	if (!root) {
 		return;
 	}
-	keysVec(root->getLeft(),keys);
+	keysVec(root->getLeft(), keys);
 	keys.push_back(root->getKey());
-	keysVec(root->getRight(),keys);
+	keysVec(root->getRight(), keys);
 }
 
 std::vector<int> Binary_Search_Tree::keysVec(Node* root) const
@@ -204,7 +204,7 @@ bool Binary_Search_Tree::remove(int key)
 	if (!node)
 		return false;
 	Node* replacementNode = nullptr;
-	Node* nodeParent = Parent(node);
+	Node* nodeParent = parent(node);
 	Node* parentReplacementNode = nullptr;
 	if (node == m_root)
 	{
@@ -214,14 +214,24 @@ bool Binary_Search_Tree::remove(int key)
 			m_root = nullptr;
 			return true;
 		}
-		replacementNode = address_max(node->getLeft());
+		if (node->getLeft())
+		{
+			replacementNode = address_max(node->getLeft());
+		}
+		else replacementNode = address_min(node->getRight());
 		node->setKey(replacementNode->getKey());
-		parentReplacementNode = Parent(replacementNode);
+		parentReplacementNode = parent(replacementNode);
 		if (replacementNode->getLeft())
 		{
-			node->setKey(replacementNode->getKey());
 			parentReplacementNode->setRight(replacementNode->getLeft());
 			replacementNode->setLeft(nullptr);
+			delete replacementNode;
+			return true;
+		}
+		if (replacementNode->getRight())
+		{
+			parentReplacementNode->setLeft(replacementNode->getRight());
+			replacementNode->setRight(nullptr);
 			delete replacementNode;
 			return true;
 		}
@@ -239,7 +249,7 @@ bool Binary_Search_Tree::remove(int key)
 	if (node->getLeft() && node->getRight())
 	{
 		replacementNode = address_max(node->getLeft());
-		parentReplacementNode = Parent(replacementNode);
+		parentReplacementNode = parent(replacementNode);
 		if (parentReplacementNode == node)
 		{
 			if (replacementNode == node->getLeft())
@@ -326,7 +336,7 @@ bool Binary_Search_Tree::remove(int key)
 	}
 }
 
-BinaryTree::Node* Binary_Search_Tree::Parent(Node* root) const
+BinaryTree::Node* Binary_Search_Tree::parent(Node* root) const
 {
 	std::list<Node*> unprocessedNodes;
 	unprocessedNodes.push_back(m_root);

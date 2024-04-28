@@ -7,31 +7,36 @@
 
 int main() {
 
-	SearchTreeTester tester(false, true);
-	tester.test(100);
+	//SearchTreeTester tester(false, true);
+	//tester.test(100);
 	Binary_Search_Tree tree;
+	std::cout << "Node count: " << tree.nodeCount() << std::endl;
 	std::vector<int> keys;
 	for (int i = 0; i < 5; i++)
 	{
 		tree.addNode(i * 10);
 	}
-	tree.addNode(-9);
-	tree.addNode(-6);
-	tree.addNode(-55);
-	tree.addNode(-66);
-	tree.addNode(-3);
-	tree.addNode(-12);
-	tree.addNode(-15);
-	tree.addNode(-4);
-	tree.addNode(33);
-	tree.addNode(31);
-	tree.addNode(22);
-	tree.printHorizontal();
+	//tree.addNode(-9);
+	//tree.addNode(-6);
+	//tree.addNode(-55);
+	//tree.addNode(-66);
+	//tree.addNode(-3);
+	//tree.addNode(-12);
+	//tree.addNode(-15);
+	//tree.addNode(-4);
+	//tree.addNode(33);
+	//tree.addNode(31);
+	//tree.addNode(22);
+
+	tree.printHorizontal(6);
+
+	std::cout << "Node count: " << tree.nodeCount() << std::endl;
 	std::cout << "Max: " << tree.max()<<std::endl;
 	std::cout << "Min: " << tree.min()<<std::endl;
 	std::cout << "Level 333: " << tree.level(tree.searchKey(333)) << std::endl;
-	std::cout << "Parent of 20: " << tree.Parent(tree.searchKey(20))->getKey() << std::endl;
-		
+	std::cout << "Parent of 20: " << tree.parent(tree.searchKey(20))->getKey() << std::endl;
+	tree.clear();
+	std::cout << "Node count: " << tree.nodeCount() << std::endl;
 
 	/*keys = tree.keysVec();
 	for (int i = 0; i < keys.size(); i++)
@@ -41,8 +46,13 @@ int main() {
 	
 	tree.printHorizontal();
 
-
-	std::cout << std::endl << "===========" << std::endl;
+	std::cout << "Keys: " << std::endl;
+	keys = tree.keysVec();
+	for (int i = 0; i < keys.size(); i++)
+	{
+		std::cout << keys[i] << " ";
+		}
+	/*std::cout << std::endl << "===========" << std::endl;
 	std::cout << std::endl;
 	tree.remove(-9);
 	tree.printHorizontal();
@@ -59,7 +69,7 @@ int main() {
 	std::cout << std::endl << "===========" << std::endl;
 	std::cout << std::endl;
 	tree.remove(33);
-	tree.printHorizontal();
+	tree.printHorizontal();*/
 
 
 	

@@ -16,6 +16,7 @@ public:
     bool assignCheckEnabled() const;
     bool heightCheckEnabled() const;
 
+    bool useConsoleOutput() const;
     void setAddAndCountCheckEnabled(const bool enabled);
     void setDestructorCheckEnabled(const bool enabled);
     void setRemoveCheckEnabled(const bool enabled);
@@ -44,7 +45,6 @@ private:
     void destructor();
     void remove();
     void clear(); //ToDo: реализовать
-    void assign();
     void height();
     void height_trivialCases();
     void height_longOnlyLeftSubtree();
@@ -53,8 +53,13 @@ private:
     void height_longRandomZigzagSubtrees();
     TreeNodes treeNodes(const BinaryTree* tree);
 
-private:
+protected:
+    virtual void assign();
+    std::vector<int> generateKeys();
     int m_maxSize;
+
+private:
+    
     bool m_useConsoleOutput;
     bool m_addAndCountCheckEnabled;
     bool m_destructorCheckEnabled;

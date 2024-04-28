@@ -168,43 +168,28 @@ void BinaryTree::clear(Node* root)
 	delete root;
 }
 
-int BinaryTree::NodeCount(Node* root) const
+
+int BinaryTree::nodeCount() const
 {
-	int count, count_l=0, count_r=0;
-	if (root == nullptr) return 0;
-	if (root->getLeft()!= nullptr) 
-	{
-		count_l = NodeCount(root->getLeft());
-	}
-	if (root->getRight()!= nullptr)
-	{
-		count_r = NodeCount(root->getRight());
-	}
-	count = 1 + count_l + count_r;
-	return count;
+	return keysVec().size();
 }
 
-int BinaryTree::NodeCount() const
+int BinaryTree::height()const
 {
-	return NodeCount(m_root);
+	return height(m_root);
 }
 
-int BinaryTree::Height()const
+int BinaryTree::height(Node* root) const
 {
-	return Height(m_root);
-}
-
-int BinaryTree::Height(Node* root) const
-{
-	int height, height_l, height_r;
+	int Height, height_l, height_r;
 	if (root == nullptr) 
 	{
 		return 0;
 	}
-	height_l = Height(root->getLeft());
-	height_r = Height(root->getRight());
-	height = 1 + std::max(height_l, height_r);
-	return height;
+	height_l = height(root->getLeft());
+	height_r = height(root->getRight());
+	Height = 1 + std::max(height_l, height_r);
+	return Height;
 }
 
 bool BinaryTree::remove(int key) 
@@ -213,7 +198,7 @@ bool BinaryTree::remove(int key)
 	if (!node)
 		return false;
 	Node* replacementNode = nullptr;
-	Node* nodeParent = Parent(node);
+	Node* nodeParent = parent(node);
 	Node* parentReplacementNode = nullptr;
 	if (node == m_root)
 	{
@@ -225,7 +210,7 @@ bool BinaryTree::remove(int key)
 		}
 		replacementNode = nodesVec().back();
 		node->setKey(replacementNode->getKey());
-		parentReplacementNode = Parent(replacementNode);
+		parentReplacementNode = parent(replacementNode);
 		if (parentReplacementNode->getRight() == replacementNode)
 		{
 			parentReplacementNode->setRight(nullptr);
@@ -240,7 +225,7 @@ bool BinaryTree::remove(int key)
 	if (node->getLeft() && node->getRight())
 	{
 		replacementNode = nodesVec().back();
-		parentReplacementNode = Parent(replacementNode);
+		parentReplacementNode = parent(replacementNode);
 		if (parentReplacementNode == node)
 		{
 			if (replacementNode == node->getLeft())
@@ -340,48 +325,48 @@ BinaryTree::Node* BinaryTree::searchKey(Node* root, int key) const
 	return subTreeSearchResult;
 }
 
-int BinaryTree::Max(Node* root)const 
+int BinaryTree::max(Node* root)const 
 {
-	int max, left=INT_MIN, right=INT_MIN;
+	int Max, left=INT_MIN, right=INT_MIN;
 	if (root == nullptr) return INT_MIN;
 	if (root->getLeft() != nullptr) 
 	{
-		left = Max(root->getLeft());
+		left = max(root->getLeft());
 	}
 	if (root->getRight() != nullptr)
 	{
-		right = Max(root->getRight());
+		right = max(root->getRight());
 	}
-	max = std::max(left, right);
-	max = std::max(max, root->getKey());
-	return(max);
+	Max = std::max(left, right);
+	Max = std::max(Max, root->getKey());
+	return(Max);
 }
 
-int BinaryTree::Max() const
+int BinaryTree::max() const
 {
-	return Max(m_root);
+	return max(m_root);
 }
 
-int BinaryTree::Min(Node* root) const
+int BinaryTree::min(Node* root) const
 {
 	if (root == nullptr) return INT_MAX;
-	int min, left = INT_MAX, right = INT_MAX;
+	int Min, left = INT_MAX, right = INT_MAX;
 	if (root->getLeft() != nullptr)
 	{
-		left = Min(root->getLeft());
+		left = min(root->getLeft());
 	}
 	if (root->getRight() != nullptr)
 	{
-		right = Min(root->getRight());
+		right = min(root->getRight());
 	}
-	min = std::min(left, right);
-	min = std::min(min, root->getKey());
-	return(min);
+	Min = std::min(left, right);
+	Min = std::min(Min, root->getKey());
+	return(Min);
 }
 
-int BinaryTree::Min() const
+int BinaryTree::min() const
 {
-	return Min(m_root);
+	return min(m_root);
 }
 
 bool BinaryTree::isBalanced(Node* root)
@@ -391,8 +376,8 @@ bool BinaryTree::isBalanced(Node* root)
 		return true;
 	}
 	int right, left, difference;
-	right = Height(root->getRight());
-	left = Height(root->getLeft());
+	right = height(root->getRight());
+	left = height(root->getLeft());
 	difference = (right - left);
 	difference=abs(difference);
 	if (difference > 1)
@@ -503,7 +488,7 @@ int BinaryTree::level(int key)
 	return level(m_root, key);
 }
 
-BinaryTree::Node* BinaryTree::Parent(Node* root) const
+BinaryTree::Node* BinaryTree::parent(Node* root) const
 {
 	std::list<Node*> unprocessedNodes;
 	unprocessedNodes.push_back(m_root);

@@ -12,19 +12,18 @@ public:
 public:
 	BinaryTree() = default;
 	BinaryTree(const BinaryTree& other);
-	~BinaryTree();
+	virtual ~BinaryTree();
 
 	bool isIdeal() const;
 	bool isEmpty()const;
 
 	Node* getRoot() const;
-	Node* addNode(int key);
+	virtual Node* addNode(int key);
 
-	int Height(Node* root) const;
-	int Height() const;
+	int height(Node* root) const;
+	int height() const;
 
-	int NodeCount() const;
-	int NodeCount(Node* root) const;
+	int nodeCount() const;
 
 
 	void printHorizontal(int levelSpacing = 4) const;
@@ -37,26 +36,26 @@ public:
 	virtual bool remove(int key);
 
 	void clear(Node* root);
-	Node* searchKey(int key);
-	Node* searchKey(Node* root, int key) const;
+	virtual Node* searchKey(int key);
+	virtual Node* searchKey(Node* root, int key) const;
 
-	int Max(Node* root) const;
-	int Max() const;
-
-	int Min(Node* root) const;
-	int Min() const;
+	virtual int max(Node* root) const;
+	virtual int max() const;
+	
+	virtual int min(Node* root) const;
+	virtual int min() const;
 
 	bool isBalanced(Node* root);
 	bool isBalanced();
 
 	std::vector<Node*> nodesVec() const;
 	std::vector<Node*> nodesVec(Node* root) const;
-	std::vector<int> keysVec() const;
+	virtual std::vector<int> keysVec() const;
 
 	int level(int key);
 	int level(Node* root, int key);
 
-	Node* Parent(Node* root) const;
+	virtual Node* parent(Node* root) const;
 	BinaryTree& operator=(const BinaryTree& other);
 
 	std::vector<Node*> leafs() const;

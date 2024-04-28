@@ -1,7 +1,7 @@
 #include <algorithm>
 #include <assert.h>
 #include <iostream>
-#include "Binary_Search_Tree.h"
+#include "C:\fourth-semester\Binary Search Tree\Binary_Search_Tree.h"
 #include "SearchTreeTester.h"
 
 SearchTreeTester::SearchTreeTester(const bool useConsoleOutput,
@@ -11,7 +11,7 @@ SearchTreeTester::SearchTreeTester(const bool useConsoleOutput,
 
 BinaryTree *SearchTreeTester::allocateTree()
 {
-    return new SearchTree;
+    return new Binary_Search_Tree;
 }
 
 void SearchTreeTester::check_addAndCount(const BinaryTree *tree, const int size)
@@ -48,14 +48,14 @@ void SearchTreeTester::assign()
         return;
     }
 
-    SearchTree tree1;
+    Binary_Search_Tree tree1;
 
     std::vector<int> nodeKeys = generateKeys();
     for (int i = 0 ; i < m_maxSize; ++i) {
-        tree1.add(nodeKeys[i]);
+        tree1.addNode(nodeKeys[i]);
     }
 
-    SearchTree tree2 = tree1; //Конструктор копирования
+    Binary_Search_Tree tree2 = tree1; //Конструктор копирования
     check_assign(&tree1, &tree2);
 
     tree1 = tree1; //Присваивание самому себе
@@ -64,7 +64,7 @@ void SearchTreeTester::assign()
     tree1 = tree2; //Присваивание одинаковых по размеру деревьев
     check_assign(&tree1, &tree2);
 
-    SearchTree tree3;
+    Binary_Search_Tree tree3;
     tree1 = tree3; //Присваивание дерева меньшего размера
     check_assign(&tree1, &tree3);
 
@@ -79,7 +79,7 @@ bool SearchTreeTester::isSearchTree(const BinaryTree *tree)
         std::cout << "======\n";
     }
     std::vector<int> keys;
-    treeKeysLnr(tree->root(), keys);
+    treeKeysLnr(tree->getRoot(), keys);
     return std::is_sorted(keys.begin(), keys.end());
 }
 
@@ -89,7 +89,7 @@ void SearchTreeTester::treeKeysLnr(BinaryTree::Node *root, std::vector<int> &key
         return;
     }
 
-    treeKeysLnr(root->left(), keys);
-    keys.push_back(root->key());
-    treeKeysLnr(root->right(), keys);
+    treeKeysLnr(root->getLeft(), keys);
+    keys.push_back(root->getKey());
+    treeKeysLnr(root->getRight(), keys);
 }
