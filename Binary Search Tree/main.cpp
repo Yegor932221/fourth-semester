@@ -7,8 +7,8 @@
 
 int main() {
 
-	//SearchTreeTester tester(false, true);
-	//tester.test(100);
+	SearchTreeTester tester(false, true);
+	tester.test(100);
 	Binary_Search_Tree tree;
 	std::cout << "Node count: " << tree.nodeCount() << std::endl;
 	std::vector<int> keys;
@@ -35,15 +35,13 @@ int main() {
 	std::cout << "Min: " << tree.min()<<std::endl;
 	std::cout << "Level 333: " << tree.level(tree.searchKey(333)) << std::endl;
 	std::cout << "Parent of 20: " << tree.parent(tree.searchKey(20))->getKey() << std::endl;
-	tree.clear();
-	std::cout << "Node count: " << tree.nodeCount() << std::endl;
 
 	/*keys = tree.keysVec();
 	for (int i = 0; i < keys.size(); i++)
 	{
 		std::cout <<keys[i] <<" ";
 	}*/
-	
+	tree.remove(-9);
 	tree.printHorizontal();
 
 	std::cout << "Keys: " << std::endl;

@@ -20,9 +20,9 @@ void BinaryTreeTester::test(const int size)
     m_maxSize = size;
     addAndCount();
     destructor();
-   /* remove();*/
+    remove();
     clear();
-   /* assign();*/
+    assign();
     height();
 }
 

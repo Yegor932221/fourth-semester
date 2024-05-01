@@ -219,8 +219,32 @@ bool Binary_Search_Tree::remove(int key)
 			replacementNode = address_max(node->getLeft());
 		}
 		else replacementNode = address_min(node->getRight());
-		node->setKey(replacementNode->getKey());
 		parentReplacementNode = parent(replacementNode);
+		if (parentReplacementNode == node)
+		{
+			if (parentReplacementNode->getRight() == replacementNode)
+			{
+				parentReplacementNode->setRight(nullptr);
+			}
+			if (parentReplacementNode->getLeft() == replacementNode)
+			{
+				parentReplacementNode->setLeft(nullptr);
+			}
+			node->setKey(replacementNode->getKey());
+			if (replacementNode->getLeft()) 
+			{
+				node->setLeft(replacementNode->getLeft());
+				replacementNode->setLeft(nullptr);
+			}
+			if (replacementNode->getRight())
+			{
+				node->setRight(replacementNode->getRight());
+				replacementNode->setRight(nullptr);
+			}
+			delete replacementNode;
+			return true;
+		}
+		node->setKey(replacementNode->getKey());
 		if (replacementNode->getLeft())
 		{
 			parentReplacementNode->setRight(replacementNode->getLeft());
@@ -252,14 +276,11 @@ bool Binary_Search_Tree::remove(int key)
 		parentReplacementNode = parent(replacementNode);
 		if (parentReplacementNode == node)
 		{
-			if (replacementNode == node->getLeft())
-			{
 				node->setKey(replacementNode->getKey());
 				node->setLeft(replacementNode->getLeft());
 				replacementNode->setLeft(nullptr);
 				delete replacementNode;
 				return true;
-			}
 		}
 		else
 		{
@@ -298,13 +319,15 @@ bool Binary_Search_Tree::remove(int key)
 		if (nodeParent->getRight() == node)
 		{
 			nodeParent->setRight(nullptr);
+			delete node;
+			return true;
 		}
 		if (nodeParent->getLeft() == node)
 		{
 			nodeParent->setLeft(nullptr);
+			delete node;
+			return true;
 		}
-		delete node;
-		return true;
 	}
 	if (node->getLeft())
 	{
@@ -317,6 +340,7 @@ bool Binary_Search_Tree::remove(int key)
 		{
 			nodeParent->setRight(replacementNode);
 		}
+		node->setLeft(nullptr);
 		delete node;
 		return true;
 	}
@@ -331,6 +355,7 @@ bool Binary_Search_Tree::remove(int key)
 		{
 			nodeParent->setRight(replacementNode);
 		}
+		node->setRight(nullptr);
 		delete node;
 		return true;
 	}
