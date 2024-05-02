@@ -3,12 +3,12 @@
 #include <vector>
 #include "Binary_Search_Tree.h"
 #include "SearchTreeTester.h"
-//#include"BinaryTreeTester.h"
 
 int main() {
 
-	SearchTreeTester tester(false, true);
-	tester.test(100);
+	/*SearchTreeTester tester(false, false);
+	tester.setRemoveCheckEnabled(true);
+	tester.test(1000);*/
 	Binary_Search_Tree tree;
 	std::cout << "Node count: " << tree.nodeCount() << std::endl;
 	std::vector<int> keys;
@@ -27,65 +27,20 @@ int main() {
 	tree.addNode(33);
 	tree.addNode(31);
 	tree.addNode(22);
+	tree.addNode(233);
+	tree.addNode(1);
+	tree.addNode(52);
 
 	tree.printHorizontal();
-
-	std::cout << "Node count: " << tree.nodeCount() << std::endl;
-	std::cout << "Max: " << tree.max()<<std::endl;
-	std::cout << "Min: " << tree.min()<<std::endl;
-	std::cout << "Level 333: " << tree.level(tree.searchKey(333)) << std::endl;
-	std::cout << "Parent of 20: " << tree.parent(tree.searchKey(20))->getKey() << std::endl;
-
-	/*keys = tree.keysVec();
-	for (int i = 0; i < keys.size(); i++)
-	{
-		std::cout <<keys[i] <<" ";
-	}*/
-	tree.remove(-9);
-	tree.printHorizontal();
-
-	std::cout << "Keys: " << std::endl;
+	
 	keys = tree.keysVec();
-	for (int i = 0; i < keys.size(); i++)
-	{
-		std::cout << keys[i] << " ";
-		}
-	/*std::cout << std::endl << "===========" << std::endl;
-	std::cout << std::endl;
-	tree.remove(-9);
-	tree.printHorizontal();
-
-	std::cout<<std::endl <<"===========" << std::endl;
-	tree.remove(0);
-	tree.printHorizontal();
-
-	std::cout << std::endl << "===========" << std::endl;
-	std::cout << std::endl;
-	tree.remove(22);
-	tree.printHorizontal();
-
-	std::cout << std::endl << "===========" << std::endl;
-	std::cout << std::endl;
-	tree.remove(33);
-	tree.printHorizontal();*/
+	Binary_Search_Tree OptimalTree(Binary_Search_Tree::createOptimalTree(keys));
+	std::cout<<std::endl << "OptimalTree: " << std::endl;
+	OptimalTree.printHorizontal();
 
 
-	
-	/*for (int i = 0; i < keys.size(); i++)
-	{
-		int key = keys[i];
-		if (tree.searchKey(key))
-		{
-			std::cout << std::endl << "Have " << key << std::endl;
-		}
-		else std::cout << std::endl << "Haven't " << key << std::endl;
-		key++;
-		if (tree.searchKey(key))
-		{
-			std::cout << std::endl << "Have " << key << std::endl;
-		}
-		else std::cout << std::endl << "Haven't " << key << std::endl;
-	}*/
-	
-	/*tree.printHorizontal();*/
+	std::vector<int> keys2 = {3,-33,87,5,44,789,9,0,-32,-5,98,777777, 3434, 56,3333333};
+	Binary_Search_Tree OptimalTree2(Binary_Search_Tree::createOptimalTree(keys2));
+	std::cout << std::endl << "OptimalTree2: " << std::endl;
+	OptimalTree2.printHorizontal();
 }

@@ -4,11 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <list>
-
-Binary_Search_Tree::Binary_Search_Tree (const Binary_Search_Tree& other)
-{
-	m_root = other._clone();
-}
+#include <algorithm>
 
 Binary_Search_Tree::~Binary_Search_Tree() 
 {
@@ -50,38 +46,7 @@ BinaryTree::Node* Binary_Search_Tree::addNode(Node* root,int key)
 	}
 	return root;
 }
-//
-//void Binary_Search_Tree::printHorizontal(int levelSpacing	) const 
-//{
-//	printHorizontal(m_root, 0, levelSpacing);
-//}
-//
-//void Binary_Search_Tree::printHorizontal(Node* root, int marginLeft, int levelSpacing) const 
-//{
-//	if (root == nullptr)
-//	{
-//		return;
-//	}
-//	printHorizontal(root->getRight(), marginLeft + levelSpacing, levelSpacing);
-//	std::cout << std::string(marginLeft, ' ') << root->getKey() << std::endl;
-//	printHorizontal(root->getLeft(), marginLeft + levelSpacing, levelSpacing);
-//}
-//
-//Binary_Search_Tree Binary_Search_Tree::clone() const
-//{
-//	return clone(m_root);
-//}
-//
-//Binary_Search_Tree Binary_Search_Tree::clone(Node* root) const
-//{
-//	Binary_Search_Tree clone;
-//	if (root == nullptr)
-//	{
-//		return clone;
-//	}
-//	clone.m_root = _clone(root);
-//	return clone;
-//}
+
 
 Binary_Search_Tree& Binary_Search_Tree::operator=(const Binary_Search_Tree& other)
 {
@@ -94,11 +59,13 @@ Binary_Search_Tree& Binary_Search_Tree::operator=(const Binary_Search_Tree& othe
 
 int Binary_Search_Tree::max(Node* root)
 {
+	if (root == nullptr) return INT_MIN;
 	return address_max(root)->getKey();
 }
 
 BinaryTree::Node* Binary_Search_Tree::address_max(Node* root)
 {
+	if (root == nullptr) return root;
 	if (root->getRight())
 	{
 	return address_max(root->getRight());
@@ -120,11 +87,13 @@ BinaryTree::Node* Binary_Search_Tree::address_max()
 
 int Binary_Search_Tree::min(Node* root)
 {
+	if (root == nullptr) return INT_MAX;
 	return address_min(root)->getKey();
 }
 
 BinaryTree::Node* Binary_Search_Tree::address_min(Node* root)
 {
+	if (root == nullptr) return root;
 	if (root->getLeft())
 	{
 		return address_min(root->getLeft());
@@ -198,197 +167,103 @@ BinaryTree::Node* Binary_Search_Tree::searchKey(int key) const
 	return searchKey(m_root, key);
 }
 
+
+bool Binary_Search_Tree::remove(Node*& root,Node* node)
+{
+	if (!node)
+		return false;
+	
+	if (node->getLeft() && node->getRight()) {
+		Node* replacementNode = address_max(node->getLeft());
+		node->setKey(replacementNode->getKey());
+		return remove(node, replacementNode);
+	}
+
+	Node* child = node->getLeft();
+	if (!child) {
+		child = node->getRight();
+	}
+
+	Node* parent = this->parent(root, node);
+	if (parent) {
+		if (parent->getLeft() == node) {
+			parent->setLeft(child);
+		}
+		else {
+			parent->setRight(child);
+		}
+	}
+	else {
+		assert(node == root);
+		root = child;
+	}
+
+	delete node;
+	return true;
+}
+
 bool Binary_Search_Tree::remove(int key)
+{
+	return remove(m_root, key);
+}
+bool Binary_Search_Tree::remove(Node*& root, int key) 
 {
 	Node* node = searchKey(key);
 	if (!node)
 		return false;
-	Node* replacementNode = nullptr;
-	Node* nodeParent = parent(node);
-	Node* parentReplacementNode = nullptr;
-	if (node == m_root)
+	else
 	{
-		if (!node->getLeft() && !node->getRight())
-		{
-			delete m_root;
-			m_root = nullptr;
-			return true;
-		}
-		if (node->getLeft())
-		{
-			replacementNode = address_max(node->getLeft());
-		}
-		else replacementNode = address_min(node->getRight());
-		parentReplacementNode = parent(replacementNode);
-		if (parentReplacementNode == node)
-		{
-			if (parentReplacementNode->getRight() == replacementNode)
-			{
-				parentReplacementNode->setRight(nullptr);
-			}
-			if (parentReplacementNode->getLeft() == replacementNode)
-			{
-				parentReplacementNode->setLeft(nullptr);
-			}
-			node->setKey(replacementNode->getKey());
-			if (replacementNode->getLeft()) 
-			{
-				node->setLeft(replacementNode->getLeft());
-				replacementNode->setLeft(nullptr);
-			}
-			if (replacementNode->getRight())
-			{
-				node->setRight(replacementNode->getRight());
-				replacementNode->setRight(nullptr);
-			}
-			delete replacementNode;
-			return true;
-		}
-		node->setKey(replacementNode->getKey());
-		if (replacementNode->getLeft())
-		{
-			parentReplacementNode->setRight(replacementNode->getLeft());
-			replacementNode->setLeft(nullptr);
-			delete replacementNode;
-			return true;
-		}
-		if (replacementNode->getRight())
-		{
-			parentReplacementNode->setLeft(replacementNode->getRight());
-			replacementNode->setRight(nullptr);
-			delete replacementNode;
-			return true;
-		}
-		if (parentReplacementNode->getRight() == replacementNode)
-		{
-			parentReplacementNode->setRight(nullptr);
-		}
-		if (parentReplacementNode->getLeft() == replacementNode)
-		{
-			parentReplacementNode->setLeft(nullptr);
-		}
-		delete replacementNode;
-		return true;
-	}
-	if (node->getLeft() && node->getRight())
-	{
-		replacementNode = address_max(node->getLeft());
-		parentReplacementNode = parent(replacementNode);
-		if (parentReplacementNode == node)
-		{
-				node->setKey(replacementNode->getKey());
-				node->setLeft(replacementNode->getLeft());
-				replacementNode->setLeft(nullptr);
-				delete replacementNode;
-				return true;
-		}
-		else
-		{
-			if (replacementNode->getLeft())
-			{
-				parentReplacementNode->setRight(replacementNode->getLeft());
-				node->setKey(replacementNode->getKey());
-				delete replacementNode;
-				return true;
-			}
-			replacementNode->setLeft(node->getLeft());
-			replacementNode->setRight(node->getRight());
-		}
-		if (parentReplacementNode->getLeft() == replacementNode)
-		{
-			parentReplacementNode->setLeft(nullptr);
-		}
-		if (parentReplacementNode->getRight() == replacementNode)
-		{
-			parentReplacementNode->setRight(nullptr);
-		}
-		if (nodeParent->getLeft() == node)
-		{
-			nodeParent->setLeft(replacementNode);
-		}
-		if (nodeParent->getRight() == node)
-		{
-			nodeParent->setRight(replacementNode);
-		}
-		delete node;
-		return true;
-	}
-
-	if (!node->getLeft() && !node->getRight())
-	{
-		if (nodeParent->getRight() == node)
-		{
-			nodeParent->setRight(nullptr);
-			delete node;
-			return true;
-		}
-		if (nodeParent->getLeft() == node)
-		{
-			nodeParent->setLeft(nullptr);
-			delete node;
-			return true;
-		}
-	}
-	if (node->getLeft())
-	{
-		replacementNode = node->getLeft();
-		if (nodeParent->getLeft() == node)
-		{
-			nodeParent->setLeft(replacementNode);
-		}
-		if (nodeParent->getRight() == node)
-		{
-			nodeParent->setRight(replacementNode);
-		}
-		node->setLeft(nullptr);
-		delete node;
-		return true;
-	}
-	if (node->getRight())
-	{
-		replacementNode = node->getRight();
-		if (nodeParent->getLeft() == node)
-		{
-			nodeParent->setLeft(replacementNode);
-		}
-		if (nodeParent->getRight() == node)
-		{
-			nodeParent->setRight(replacementNode);
-		}
-		node->setRight(nullptr);
-		delete node;
-		return true;
+		remove(root, node);
 	}
 }
 
-BinaryTree::Node* Binary_Search_Tree::parent(Node* root) const
-{
-	std::list<Node*> unprocessedNodes;
-	unprocessedNodes.push_back(m_root);
-	while (!unprocessedNodes.empty())
-	{
-		Node* node = unprocessedNodes.front();
-		if (node == nullptr) return nullptr;
-		if (node->getLeft())
-		{
-			if (node->getLeft() == root)
-			{
-				return node;
-			}
-			unprocessedNodes.push_back(node->getLeft());
-		}
-		if (node->getRight())
-		{
-			if (node->getRight() == root)
-			{
-				return node;
-			}
-			unprocessedNodes.push_back(node->getRight());
-		}
-		unprocessedNodes.pop_front();
-	}
-	return nullptr;
-}
+//bool Binary_Search_Tree::remove( Node* node)
+//{
+//	if (!node->getLeft() || !node->getRight())
+//	{
+//		if (root->getLeft() == node) {
+//			if (!node->getRight())
+//			{
+//				root->setLeft(node->getRight());
+//				node->setRight(nullptr);
+//			}
+//			if (!node->getLeft())
+//			{
+//				root->setLeft(node->getLeft());
+//				node->setLeft(nullptr);
+//			}
+//			delete node;
+//			return true;
+//		}
+//		else {
+//			if (!node->getRight())
+//			{
+//				root->setRight(node->getRight());
+//				node->setRight(nullptr);
+//			}
+//			if (!node->getLeft())
+//			{
+//				root->setRight(node->getLeft());
+//				node->setLeft(nullptr);
+//			}
+//			delete node;
+//			return true;
+//		}
+//	}
+//	if (!node->getLeft() && !node->getRight())
+//	{
+//		if (root->getLeft() == node)
+//		{
+//			root->setLeft(nullptr);
+//		}
+//		if (root->getRight() == node)
+//		{
+//			root->setRight(nullptr);
+//		}
+//		delete node;
+//		return true;
+//	}
+//}
 
 int Binary_Search_Tree::level(Node* node, Node* root) const
 {
@@ -425,4 +300,76 @@ int Binary_Search_Tree::level(Node* node, Node* root) const
 int Binary_Search_Tree::level(Node* node) const
 {
 	return level(node, m_root);
+}
+
+//Binary_Search_Tree createOptimalTree(std::vector<int> keys)
+//{
+//	std::vector<int> vecKey = keys;
+//	std::sort(vecKey.begin(), vecKey.end());
+//	Binary_Search_Tree OTree;
+//	OTree.fillingOTree(0,keys.size(),vecKey);
+//	return OTree;
+//}
+
+ void Binary_Search_Tree::fillingOTree(int min, int max, std::vector<int> keys)
+{
+	addNode(keys[(min + max) / 2]);
+	if(((min + max)/2)-1-min>=0 && (min + max) / 2 >=1)
+	{
+		fillingOTree(min, ((min + max)/2) - 1, keys);
+	}
+	if (max- ((min + max) / 2) - 1>= 0)
+	{
+		fillingOTree(((min + max) / 2) + 1, max, keys);
+	}
+	return;
+}
+
+//int Binary_Search_Tree::balance(Node* root)
+//{
+//	int Balance,Balance_r=0,Balance_l=0;
+//	if (root->getRight())
+//	{
+//		Balance_r =1+std::abs(balance(root->getRight()));
+//	}
+//	if (root->getLeft())
+//	{
+//		Balance_l =1+std::abs(balance(root->getLeft()));
+//	}
+//	Balance = Balance_r - Balance_l;
+//	return(Balance);
+//}
+
+BinaryTree::Node* Binary_Search_Tree::parent(Node* child) const
+{
+	return BinaryTree::parent(child);
+}
+
+BinaryTree::Node* Binary_Search_Tree::parent(Node* root,Node* child) const
+{
+	std::list<Node*> unprocessedNodes;
+	unprocessedNodes.push_back(root);
+	while (!unprocessedNodes.empty())
+	{
+		Node* node = unprocessedNodes.front();
+		if (node == nullptr) return nullptr;
+		if (node->getLeft())
+		{
+			if (node->getLeft() == child)
+			{
+				return node;
+			}
+			unprocessedNodes.push_back(node->getLeft());
+		}
+		if (node->getRight())
+		{
+			if (node->getRight() == child)
+			{
+				return node;
+			}
+			unprocessedNodes.push_back(node->getRight());
+		}
+		unprocessedNodes.pop_front();
+	}
+	return nullptr;
 }

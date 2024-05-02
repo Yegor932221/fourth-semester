@@ -3,19 +3,15 @@
 #include <iostream>
 #include <vector>
 #include <list>
+#include <algorithm>
 #include "C:\fourth-semester\binary trees\BinaryTree.h"
 class Binary_Search_Tree : public BinaryTree
 {
 public:
 	Binary_Search_Tree() = default;
-	Binary_Search_Tree(const Binary_Search_Tree& other);
 	~Binary_Search_Tree() override;
 	Node* addNode(int key) override;
 	Node* addNode(Node* root,int key);
-	/*void printHorizontal(int levelSpacing=4) const;
-	void printHorizontal(Node* root, int marginLeft, int levelSpacing) const;
-	Binary_Search_Tree clone() const;
-	Binary_Search_Tree clone(Node* root) const;*/
 	Binary_Search_Tree& operator=(const Binary_Search_Tree& other);
 	int max(Node* root);
 	Node* address_max(Node* root);
@@ -34,11 +30,25 @@ public:
 	Node* searchKey(int key) const;
 
 	bool remove(int key) override;
-	Node* parent(Node* root) const;
+	bool remove(Node*& root, int key);
+	bool remove(Node*& root, Node* node);
+	bool remove(Node* node);
+	Node* parent(Node* root) const override;
 
 	int level(Node* node, Node* root) const;
 	int level(Node* node) const;
+	Node* parent(Node* root, Node* node) const;
 
+	static Binary_Search_Tree createOptimalTree(std::vector<int> keys)
+	{
+		std::vector<int> vecKey = keys;
+		std::sort(vecKey.begin(), vecKey.end());
+		Binary_Search_Tree OTree;
+		OTree.fillingOTree(0, keys.size()-1, vecKey);
+		return OTree;
+	};
+	 void fillingOTree(int min, int max, std::vector<int> keys);
+	/*int balance(Node* root);*/
 
 };
 
