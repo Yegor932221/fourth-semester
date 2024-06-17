@@ -10,4 +10,5 @@ int main()
 	std::string name = "pupupu.txt";
 	const char* file= name.c_str();
 	tree.build(file);
+	tree.printHorizontal();
 }

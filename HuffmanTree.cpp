@@ -4,6 +4,7 @@
 #include<string.h>
 #include <vector>
 #include <list>
+#include <iterator>
 
 
 HuffmanTree::Node::Node(BoolVector key, int frequency, Node* left, Node* right)
@@ -69,49 +70,69 @@ void HuffmanTree::build(const char* text)
 		TAB[el_now]++;
 	}
 	file.close();
-	BoolVector simbols;
 	for (int i = 0; i < 256; i++)
 	{
-		int k = 0;
 		if (TAB[i] > 0)
 		{
-			const char s = static_cast<char>(i);
-			simbols[k] = s;
-			k++;
+			BoolVector symbols(256, false);
+			symbols.Set1(0, i);
+			tree.push_back(new Node(symbols, TAB[i], nullptr, nullptr));
 		}
 	}
-	HoarSort(TAB, 0, 255, simbols);
-	for (int i = 0; i < simbols.size(); i++) 
+	std::list<Node*>::iterator it = tree.begin();
+	std::list<Node*>::iterator jt = tree.begin();
+	for ( ;it != tree.end(); ++it)
 	{
-		std::string str(1, simbols[i]);
-		Node now(str,herz[i],nullptr,nullptr);
-		tree.push_back(&now);
+		for (; jt != tree.end(); ++jt)
+		{
+			if ((*it)->Getfrequency() > (*jt)->Getfrequency())
+			{
+				std::swap(*it, *jt);
+			}
+		}
 	}
-	for (;tree.size()>1;)
+	while(tree.size()>1)
 	{
+		Node* left = tree.front();
+		tree.pop_front();
+		Node* right = tree.front();
+		tree.pop_front();
+		BoolVector key = right->getKey()&left->getKey();
+		int frequency = right->Getfrequency() + left->Getfrequency();
+		Node node(key, frequency, left, right);
+		tree.push_back(&node);
+	}
+	m_root = tree.front();
+}
 
-		Node now(, herz[i], nullptr, nullptr);
-	}
+int HuffmanTree::Node::Getfrequency() const
+{
+	return m_frequency;
 }
-void HoarSort(int* arr, int l, int r, std::list <std::string>& simbols) {
-	if (l >= r)
+
+void HuffmanTree::printHorizontal(Node* root, int marginLeft, int levelSpacing) const
+{
+	if (root == nullptr) {
 		return;
-	int i = l;
-	int j = r;
-	int x = arr[(l + r) / 2];
-	while (i <= j) {
-		while (arr[i] < x) i++;
-		while (arr[j] > x) j--;
-		if (i <= j) {
-			std::swap(arr[i], arr[j]);
-			std::swap(simbols[i], simbols[j]);
-			i++;
-			j--;
+	}
+
+	printHorizontal(root->getRight(), marginLeft + levelSpacing, levelSpacing);
+	std::cout << std::string(marginLeft-1, ' ');
+	for (int i = 0; i < 256; ++i)
+	{
+		if (root->getKey()[i] == true)
+		{
+			std::cout << ' ' << static_cast<char>(i) << std::endl;
 		}
 	}
-	HoarSort(arr, l, j, simbols);
-	HoarSort(arr, i, r, simbols);
+	printHorizontal(root->getLeft(), marginLeft + levelSpacing, levelSpacing);
 }
+
+void HuffmanTree::printHorizontal(int levelSpacing) const
+{
+	printHorizontal(m_root, 0, levelSpacing);
+}
+
 //int encode(char text, char& coded)
 //{
 //

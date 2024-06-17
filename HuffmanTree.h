@@ -10,7 +10,8 @@ class HuffmanTree {
 public:
 	class Node;
 	void build(const char* text);
-
+	void printHorizontal(Node* root, int marginLeft, int levelSpacing) const;
+	void printHorizontal(int levelSpacing=6) const;
 	/*int encode(char text,char& coded);
 	int encode(std::string text, char& coded);
 	int encode(std::string text, std::string& coded);
@@ -37,9 +38,10 @@ private:
 	Node* m_rightChild = nullptr;
 
 public:
+	int Getfrequency() const;
 	BoolVector getKey() const;
 	void setKey(BoolVector key);
-
+	
 	Node* getLeft();
 	Node* getRight();
 	void setLeft(Node* left);
