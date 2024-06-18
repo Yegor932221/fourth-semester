@@ -38,7 +38,7 @@ private:
 	Node* m_rightChild = nullptr;
 
 public:
-	int Getfrequency() const;
+	int getFrequency() const;
 	BoolVector getKey() const;
 	void setKey(BoolVector key);
 	
@@ -46,5 +46,6 @@ public:
 	Node* getRight();
 	void setLeft(Node* left);
 	void setRight(Node* right);
+	void setFrequency(int frequency);
 };
 
