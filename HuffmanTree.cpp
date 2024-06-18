@@ -49,24 +49,30 @@ void HuffmanTree::Node::setRight(Node* right)
 	m_rightChild = right;
 }
 
-void HuffmanTree::build(const char* text)
+int HuffmanTree::Node::getFrequency() const
 {
-	FILE* mass;
-	fopen_s(&mass, text, "r");
-	if (mass == NULL)
-	{
-		perror("error opening file");
-		getchar();
-		exit(-1);
-	}
+	return m_frequency;
+}
+
+void HuffmanTree::Node::setFrequency(int frequency)
+{
+	m_frequency= frequency;
+}
+
+void HuffmanTree::build(const std::string& text)
+{
 	std::list<Node*> tree;
-	std::ifstream file(text);
+	std::ifstream file(text, std::ios::binary);
+	if (!file.good())
+	{
+		std::cout << "File not found!" << std::endl;
+		return;
+	}
 	int* TAB = new int[256];
 	for (int i = 0; i < 256; i++) TAB[i] = 0;
-	while (file.good())
+	unsigned char el_now;
+	while (file >> el_now)
 	{
-		char el_now;
-		file >> el_now;
 		TAB[el_now]++;
 	}
 	file.close();
@@ -79,35 +85,39 @@ void HuffmanTree::build(const char* text)
 			tree.push_back(new Node(symbols, TAB[i], nullptr, nullptr));
 		}
 	}
-	std::list<Node*>::iterator it = tree.begin();
-	std::list<Node*>::iterator jt = tree.begin();
-	for ( ;it != tree.end(); ++it)
+	for (std::list<Node*>::iterator it = tree.begin(); it != tree.end(); it++)
 	{
-		for (; jt != tree.end(); ++jt)
+		for (std::list<Node*>::iterator jt = tree.begin(); jt != tree.end(); jt++)
 		{
-			if ((*it)->Getfrequency() > (*jt)->Getfrequency())
+			if ((*it)->getFrequency() < (*jt)->getFrequency())
 			{
 				std::swap(*it, *jt);
 			}
 		}
 	}
-	while(tree.size()>1)
+	while(tree.size() !=1)
 	{
 		Node* left = tree.front();
 		tree.pop_front();
 		Node* right = tree.front();
 		tree.pop_front();
-		BoolVector key = right->getKey()&left->getKey();
-		int frequency = right->Getfrequency() + left->Getfrequency();
-		Node node(key, frequency, left, right);
-		tree.push_back(&node);
+		BoolVector key = right->getKey()|left->getKey();
+		int frequency = right->getFrequency() + left->getFrequency();
+		Node* node=new Node(key, frequency, left, right);
+		tree.push_back(node);
+		for (std::list<Node*>::iterator it = tree.begin(); it != tree.end(); it++)
+		{
+			for (std::list<Node*>::iterator jt = tree.begin(); jt != tree.end(); jt++)
+			{
+				if ((*it)->getFrequency() < (*jt)->getFrequency())
+				{
+					std::swap(*it, *jt);
+				}
+			}
+		}
 	}
 	m_root = tree.front();
-}
-
-int HuffmanTree::Node::Getfrequency() const
-{
-	return m_frequency;
+	delete []TAB;
 }
 
 void HuffmanTree::printHorizontal(Node* root, int marginLeft, int levelSpacing) const
@@ -117,12 +127,11 @@ void HuffmanTree::printHorizontal(Node* root, int marginLeft, int levelSpacing) 
 	}
 
 	printHorizontal(root->getRight(), marginLeft + levelSpacing, levelSpacing);
-	std::cout << std::string(marginLeft-1, ' ');
 	for (int i = 0; i < 256; ++i)
 	{
 		if (root->getKey()[i] == true)
 		{
-			std::cout << ' ' << static_cast<char>(i) << std::endl;
+			std::cout << std::string(marginLeft, ' ') << static_cast<char>(i) << std::endl;
 		}
 	}
 	printHorizontal(root->getLeft(), marginLeft + levelSpacing, levelSpacing);

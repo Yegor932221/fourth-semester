@@ -9,7 +9,7 @@
 class HuffmanTree {
 public:
 	class Node;
-	void build(const char* text);
+	void build(const std::string& text);
 	void printHorizontal(Node* root, int marginLeft, int levelSpacing) const;
 	void printHorizontal(int levelSpacing=6) const;
 	/*int encode(char text,char& coded);
