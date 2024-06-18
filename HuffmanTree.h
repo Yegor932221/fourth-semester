@@ -12,15 +12,9 @@ public:
 	void build(const std::string& text);
 	void printHorizontal(Node* root, int marginLeft, int levelSpacing) const;
 	void printHorizontal(int levelSpacing=6) const;
-	/*int encode(char text,char& coded);
-	int encode(std::string text, char& coded);
-	int encode(std::string text, std::string& coded);
-	int encode(char text, std::string& coded);
-
-	int decode(char decoded, char& coded);
-	int decode(std::string decoded, char& coded);
-	int decode(std::string decoded, std::string& coded);
-	int decode(char decoded, std::string& coded);*/
+	float  encode(const std::string& original, const std::string& encoded);
+	bool decode(const std::string& encoded, const std::string& decoded);
+	
 private:
 	Node* m_root=nullptr;
 };

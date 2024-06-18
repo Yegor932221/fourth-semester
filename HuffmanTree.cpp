@@ -142,42 +142,59 @@ void HuffmanTree::printHorizontal(int levelSpacing) const
 	printHorizontal(m_root, 0, levelSpacing);
 }
 
-//int encode(char text, char& coded)
-//{
-//
-//}
-//
-//int encode(std::string text, char& coded)
-//{
-//
-//}
-//
-//int encode(std::string text, std::string& coded)
-//{
-//
-//}
-//
-//int encode(char text, std::string& coded)
-//{
-//
-//}
-//
-//int decode(char decoded, char& coded)
-//{
-//
-//}
-//
-//int decode(std::string decoded, char& coded)
-//{
-//
-//}
-//
-//int decode(std::string decoded, std::string& coded)
-//{
-//
-//}
-//
-//int decode(char decoded, std::string& coded)
-//{
-//
-//}
+float  HuffmanTree::encode(const std::string& original, const std::string& encoded)
+{
+	float input=0,output=0;
+	if (!m_root)
+	{
+		build(original);
+	}
+	std::ifstream originalFile(original, std::ios::binary);
+	if (!originalFile.is_open())
+	{
+		std::cout << "File "<< original <<" not found!" << std::endl;
+		return -1;
+	}
+	std::ofstream encodedFile(encoded, std::ios::binary);
+	if (!encodedFile.is_open())
+	{
+		std::cerr << "Can't open file: " << encoded << std::endl;
+		return -1;
+	}
+	while (!originalFile.eof())
+	{
+		unsigned char element;
+		originalFile >> element;
+		input =+8;
+		BoolVector code(256, 0);
+		code[element] = 1;
+		Node* node = m_root;
+		while (node->getLeft() || node->getRight())
+		{
+			bool left = (((node->getLeft()->getKey()) & code) == code);
+			bool right = (((node->getRight()->getKey()) & code) == code);
+			if (left)
+			{
+				encodedFile << false;
+				output++;
+				node = node->getLeft();
+				continue;
+			}
+			if (right)
+			{
+				encodedFile << true;
+				output++;
+				node = node->getRight();
+				continue;
+			}
+		}
+	}
+	originalFile.close();
+	encodedFile.close();
+	return output / input;
+}
+
+bool HuffmanTree::decode(const std::string& encoded, const std::string& decoded)
+{
+	return true;
+}

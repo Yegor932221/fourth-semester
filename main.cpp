@@ -7,8 +7,9 @@
 int main()
 {
 	class HuffmanTree tree;
-	std::string name = "pupupu.txt";
-	const char* file= name.c_str();
-	tree.build(file);
-	tree.printHorizontal();
+	std::string orig = "original.txt";
+	std::string encoded = "encoded.txt";
+	tree.build(orig);
+	/*tree.printHorizontal();*/
+	int cof = tree.encode(orig, encoded);
 }
