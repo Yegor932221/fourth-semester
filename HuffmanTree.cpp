@@ -80,8 +80,8 @@ void HuffmanTree::build(const std::string& text)
 	{
 		if (TAB[i] > 0)
 		{
-			BoolVector symbols(256, false);
-			symbols.Set1(0, i);
+			BoolVector symbols(256, 0);
+			symbols[i]=1;
 			tree.push_back(new Node(symbols, TAB[i], nullptr, nullptr));
 		}
 	}
@@ -172,12 +172,12 @@ float  HuffmanTree::encode(const std::string& original, const std::string& encod
 		originalFile >> element;
 		input++;
 		BoolVector code(256, 0);
-		code.Set1(0,element);
 		Node* node = m_root;
+		code[element]=1;
 		while (node->getLeft() || node->getRight())
 		{
-			bool left = (((node->getLeft()->getKey()) & code) == code);
-			bool right = (((node->getRight()->getKey()) & code) == code);
+			bool left = (((node->getLeft()->getKey()) &= code) == code);
+			bool right = (((node->getRight()->getKey()) &= code) == code);
 			if (left)
 			{
 				coded.Set0(0, i);
@@ -188,11 +188,12 @@ float  HuffmanTree::encode(const std::string& original, const std::string& encod
 					output++;
 					coded_el = coded.getCells();
 					sapportFile << coded_el[0];
+					coded.Set0All();
 				}
 				node = node->getLeft();
 				continue;
 			}
-			else if (right)
+			if (right)
 			{
 				coded.Set1(0, i);
 				i++;
@@ -201,16 +202,13 @@ float  HuffmanTree::encode(const std::string& original, const std::string& encod
 					i = 0;
 					output++;
 					coded_el = coded.getCells();
-					coded.Set0All();
 					sapportFile << coded_el[0];
+					coded.Set0All();
 				}
 				node = node->getRight();
 				continue;
 			}
-			else
-			{
 				std::cerr << "there is no " << element << " in the tree"<< std::endl;
-			}
 		}
 	}
 	output++;
@@ -219,9 +217,6 @@ float  HuffmanTree::encode(const std::string& original, const std::string& encod
 	sapportFile << coded_el[0];
 	originalFile.close();
 	sapportFile.close();
-
-	
-	
 	std::ofstream encodedFile(encoded, std::ios::binary);
 	std::ifstream sapportEncodedFile(sapport, std::ios::binary);
 	if (i==0)
@@ -240,5 +235,61 @@ float  HuffmanTree::encode(const std::string& original, const std::string& encod
 
 bool HuffmanTree::decode(const std::string& encoded, const std::string& decoded)
 {
+	std::ifstream encodedFile(encoded, std::ios::binary);
+	std::ofstream dencodedFile(decoded, std::ios::binary);
+	int insignificantCount;
+	encodedFile >> insignificantCount;
+	unsigned char element;
+	encodedFile >> element;
+	BoolVector search;
+	search.addSymbol(element, 0);
+	int i = 0;
+	while (!encodedFile.eof())
+	{
+		Node* pointer= m_root;
+		while (pointer->getLeft() && pointer->getRight())
+		{
+			if (i > 7)
+			{
+				encodedFile >> element;
+				search.addSymbol(element, 0);
+				i = 0;
+			}
+			if (encodedFile.eof()) 
+			{
+				while (i+insignificantCount<7)
+				{
+					if (search[i] == false)
+					{
+						pointer = pointer->getLeft();
+						i++;
+					}
+					else if (search[i] == true)
+					{
+						pointer = pointer->getRight();
+						i++;
+					}
+				}
+				break;
+			}
+			if (search[i] == 1)
+			{
+				pointer = pointer->getRight();
+				i++;
+			}
+			else if (search[i] == 0)
+			{
+				pointer = pointer->getLeft();
+				i++;
+			}
+		}
+		for (int j = 0; j < 256; j++) {
+			if (pointer->getKey()[j] == 1)
+			{
+				dencodedFile << static_cast<unsigned char>(j);
+				break;
+			}
+		}
+	}
 	return true;
 }

@@ -439,3 +439,9 @@ const BoolVector::UC* BoolVector::getCells() const
 {
 	return m_cells;
 }
+
+void BoolVector::addSymbol(const UC symbol, int index)
+{
+	assert(index < m_cellCount);
+	m_cells[index] = symbol;
+}

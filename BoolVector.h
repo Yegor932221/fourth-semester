@@ -59,6 +59,7 @@ public:
 	BoolVector& operator=(const BoolVector& other);
 	friend	std::ostream& operator <<(std::ostream& stream, const BoolVector& vector);
 	const UC* getCells() const;
+	void addSymbol(const UC symbol, int index);
 };
 
 class BoolVector::BoolRank
