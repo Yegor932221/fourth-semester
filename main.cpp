@@ -12,4 +12,5 @@ int main()
 	tree.build(orig);
 	/*tree.printHorizontal();*/
 	int cof = tree.encode(orig, encoded);
+	std::cout << "cof:"<<cof;
 }

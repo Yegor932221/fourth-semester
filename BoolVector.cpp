@@ -426,3 +426,16 @@ bool BoolVector::operator==(const BoolVector& other)const
 	}
 	return true;
 }
+
+void BoolVector::Swap(int i, int j)
+{
+	assert(i >= 0 && i <= m_cellCount && j >= 0 && j <= m_cellCount);
+	UC cell = m_cells[i];
+	m_cells[i] = m_cells[j];
+	m_cells[j] = cell;
+}
+
+const BoolVector::UC* BoolVector::getCells() const
+{
+	return m_cells;
+}

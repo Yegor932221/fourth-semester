@@ -155,19 +155,24 @@ float  HuffmanTree::encode(const std::string& original, const std::string& encod
 		std::cout << "File "<< original <<" not found!" << std::endl;
 		return -1;
 	}
-	std::ofstream encodedFile(encoded, std::ios::binary);
-	if (!encodedFile.is_open())
+	std::string sapport = "sapportFile_" + original;
+	std::ofstream sapportFile(sapport, std::ios::binary);
+	if (!sapportFile.is_open())
 	{
 		std::cerr << "Can't open file: " << encoded << std::endl;
 		return -1;
 	}
+
+	int i = 0;
+	BoolVector coded;
+	const unsigned char* coded_el;
 	while (!originalFile.eof())
 	{
 		unsigned char element;
 		originalFile >> element;
-		input =+8;
+		input++;
 		BoolVector code(256, 0);
-		code[element] = 1;
+		code.Set1(0,element);
 		Node* node = m_root;
 		while (node->getLeft() || node->getRight())
 		{
@@ -175,23 +180,62 @@ float  HuffmanTree::encode(const std::string& original, const std::string& encod
 			bool right = (((node->getRight()->getKey()) & code) == code);
 			if (left)
 			{
-				encodedFile << false;
-				output++;
+				coded.Set0(0, i);
+				i++;
+				if (i == 8)
+				{
+					i = 0;
+					output++;
+					coded_el = coded.getCells();
+					sapportFile << coded_el[0];
+				}
 				node = node->getLeft();
 				continue;
 			}
-			if (right)
+			else if (right)
 			{
-				encodedFile << true;
-				output++;
+				coded.Set1(0, i);
+				i++;
+				if (i == 8)
+				{
+					i = 0;
+					output++;
+					coded_el = coded.getCells();
+					coded.Set0All();
+					sapportFile << coded_el[0];
+				}
 				node = node->getRight();
 				continue;
 			}
+			else
+			{
+				std::cerr << "there is no " << element << " in the tree"<< std::endl;
+			}
 		}
 	}
+	output++;
+	coded_el = coded.getCells();
+	coded.Set0All();
+	sapportFile << coded_el[0];
 	originalFile.close();
+	sapportFile.close();
+
+	
+	
+	std::ofstream encodedFile(encoded, std::ios::binary);
+	std::ifstream sapportEncodedFile(sapport, std::ios::binary);
+	if (i==0)
+	{
+		encodedFile << 0;
+	}
+	else
+	{
+		encodedFile << (8 - i);
+	}
+	encodedFile << sapportEncodedFile.rdbuf();
 	encodedFile.close();
-	return output / input;
+	sapportEncodedFile.close();
+	return (output /input)*100;
 }
 
 bool HuffmanTree::decode(const std::string& encoded, const std::string& decoded)

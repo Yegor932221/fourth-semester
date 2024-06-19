@@ -35,7 +35,7 @@ public:
 	void Set1All();
 	void Set0All();
 	int Weight() const;
-
+	void Swap(int i, int j);
 	class BoolRank;
 
 	BoolVector::BoolRank operator[](const int index);
@@ -58,6 +58,7 @@ public:
 
 	BoolVector& operator=(const BoolVector& other);
 	friend	std::ostream& operator <<(std::ostream& stream, const BoolVector& vector);
+	const UC* getCells() const;
 };
 
 class BoolVector::BoolRank
