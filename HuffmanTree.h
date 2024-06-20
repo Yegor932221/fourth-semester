@@ -14,7 +14,10 @@ public:
 	void printHorizontal(int levelSpacing=6) const;
 	float  encode(const std::string& original, const std::string& encoded);
 	bool decode(const std::string& encoded, const std::string& decoded);
-	
+	void export(const std::string& text);
+	std::vector<Node*> leafs() const;
+	void import(const std::string& text);
+	void clear(Node* root);
 private:
 	Node* m_root=nullptr;
 };

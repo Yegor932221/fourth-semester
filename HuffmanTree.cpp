@@ -61,6 +61,10 @@ void HuffmanTree::Node::setFrequency(int frequency)
 
 void HuffmanTree::build(const std::string& text)
 {
+	if (m_root)
+	{
+		clear(m_root);
+	}
 	std::list<Node*> tree;
 	std::ifstream file(text, std::ios::binary);
 	if (!file.good())
@@ -292,4 +296,122 @@ bool HuffmanTree::decode(const std::string& encoded, const std::string& decoded)
 		}
 	}
 	return true;
+}
+
+void HuffmanTree::export(const std::string& text)
+{
+	if (!m_root)
+	{
+		std::cerr << "Tree is empty. Can't export" << std::endl;
+		return;
+	}
+	std::ofstream file(text);
+	int* TAB = new int[256];
+	for (int i = 0; i < 256; i++) TAB[i] = 0;
+	std::vector<Node*> leafsVec = leafs();
+	for (int i = 0; i < leafsVec.size(); ++i)
+	{
+		for (int j = 0; j < 256; j++)
+		{
+			if (leafsVec[i]->getKey()[j] == 1)
+				TAB[j] = leafsVec[i]->getFrequency();
+		}
+	}
+	for (int i = 0; i < 256; i++)
+	{
+		file<<TAB[i]<<" ";
+	}
+	file.close();
+}
+
+std::vector<HuffmanTree::Node*> HuffmanTree::leafs() const
+{
+	std::list<Node*> nodeList;
+	std::vector<Node*> leafs;
+	nodeList.push_back(m_root);
+	while (!nodeList.empty())
+	{
+		Node* node = nodeList.front();
+		if (!(node->getLeft()) && !(node->getRight()))
+		{
+			leafs.push_back(node);
+		}
+		if (node->getLeft())
+		{
+			nodeList.push_back(node->getLeft());
+		}
+		if (node->getRight())
+		{
+			nodeList.push_back(node->getRight());
+		}
+		nodeList.pop_front();
+	}
+	return leafs;
+}
+
+void HuffmanTree::clear(Node* root)
+{
+	if (!root)
+		return;
+	clear(root->getLeft());
+	clear(root->getRight());
+	delete root;
+}
+
+void HuffmanTree::import(const std::string& text)
+{
+	if (m_root)
+	{
+		clear(m_root);
+	}
+	std::ifstream file(text);
+	int* TAB = new int[256];
+	for (int i = 0; i < 256; i++)
+	{
+		file >> TAB[i];
+	}
+	file.close();
+	std::list<Node*> tree;
+	for (int i = 0; i < 256; i++)
+	{
+		if (TAB[i] > 0)
+		{
+			BoolVector symbols(256, 0);
+			symbols[i] = 1;
+			tree.push_back(new Node(symbols, TAB[i], nullptr, nullptr));
+		}
+	}
+	for (std::list<Node*>::iterator it = tree.begin(); it != tree.end(); it++)
+	{
+		for (std::list<Node*>::iterator jt = tree.begin(); jt != tree.end(); jt++)
+		{
+			if ((*it)->getFrequency() < (*jt)->getFrequency())
+			{
+				std::swap(*it, *jt);
+			}
+		}
+	}
+	while (tree.size() != 1)
+	{
+		Node* left = tree.front();
+		tree.pop_front();
+		Node* right = tree.front();
+		tree.pop_front();
+		BoolVector key = right->getKey() | left->getKey();
+		int frequency = right->getFrequency() + left->getFrequency();
+		Node* node = new Node(key, frequency, left, right);
+		tree.push_back(node);
+		for (std::list<Node*>::iterator it = tree.begin(); it != tree.end(); it++)
+		{
+			for (std::list<Node*>::iterator jt = tree.begin(); jt != tree.end(); jt++)
+			{
+				if ((*it)->getFrequency() < (*jt)->getFrequency())
+				{
+					std::swap(*it, *jt);
+				}
+			}
+		}
+	}
+	m_root = tree.front();
+	delete[]TAB;
 }
