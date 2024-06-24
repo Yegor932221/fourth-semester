@@ -75,6 +75,7 @@ void HuffmanTree::build(const std::string& text)
 	int* TAB = new int[256];
 	for (int i = 0; i < 256; i++) TAB[i] = 0;
 	unsigned char el_now;
+	file >> std::noskipws;
 	while (file >> el_now)
 	{
 		TAB[el_now]++;
@@ -98,6 +99,16 @@ void HuffmanTree::build(const std::string& text)
 				std::swap(*it, *jt);
 			}
 		}
+	}
+	if (tree.size() == 1)
+	{
+		Node* root = tree.front();
+		Node* node = new Node(root->getKey(), root->getFrequency(), nullptr, nullptr);
+		root->setRight(node);
+		root->setLeft(node);
+		m_root = root;
+		delete[]TAB;
+		return;
 	}
 	while(tree.size() !=1)
 	{
@@ -148,7 +159,7 @@ void HuffmanTree::printHorizontal(int levelSpacing) const
 
 float  HuffmanTree::encode(const std::string& original, const std::string& encoded)
 {
-	float input=0,output=0;
+	float input = 0, output = 0;
 	if (!m_root)
 	{
 		build(original);
@@ -156,7 +167,7 @@ float  HuffmanTree::encode(const std::string& original, const std::string& encod
 	std::ifstream originalFile(original, std::ios::binary);
 	if (!originalFile.is_open())
 	{
-		std::cout << "File "<< original <<" not found!" << std::endl;
+		std::cout << "File " << original << " not found!" << std::endl;
 		return -1;
 	}
 	std::string sapport = "sapportFile_" + original;
@@ -170,14 +181,15 @@ float  HuffmanTree::encode(const std::string& original, const std::string& encod
 	int i = 0;
 	BoolVector coded;
 	const unsigned char* coded_el;
+	unsigned char element1;
+	originalFile >> std::noskipws;
+	originalFile >> element1;
 	while (!originalFile.eof())
 	{
-		unsigned char element;
-		originalFile >> element;
 		input++;
 		BoolVector code(256, 0);
-		Node* node = m_root;
-		code[element]=1;
+		Node* node = m_root;	
+		code[element1] = 1;
 		while (node->getLeft() || node->getRight())
 		{
 			bool left = (((node->getLeft()->getKey()) &= code) == code);
@@ -191,7 +203,7 @@ float  HuffmanTree::encode(const std::string& original, const std::string& encod
 					i = 0;
 					output++;
 					coded_el = coded.getCells();
-					sapportFile << coded_el[0];
+					sapportFile << *coded_el;
 					coded.Set0All();
 				}
 				node = node->getLeft();
@@ -206,24 +218,31 @@ float  HuffmanTree::encode(const std::string& original, const std::string& encod
 					i = 0;
 					output++;
 					coded_el = coded.getCells();
-					sapportFile << coded_el[0];
+					sapportFile << *coded_el;
 					coded.Set0All();
 				}
 				node = node->getRight();
 				continue;
 			}
-				std::cerr << "there is no " << element << " in the tree"<< std::endl;
+			std::cerr << "there is no " << element1 << " in the tree" << std::endl;
+			continue;
 		}
+		originalFile >> element1;
 	}
-	output++;
-	coded_el = coded.getCells();
-	coded.Set0All();
-	sapportFile << coded_el[0];
+	if (i != 0) {
+
+		output++;
+		/*coded >>= (8-i);*/
+		coded_el = coded.getCells();
+		/*std::cout << "\nsearch:" << coded << "\n";*/
+		sapportFile << coded_el[0];
+		coded.Set0All();
+	}
 	originalFile.close();
 	sapportFile.close();
 	std::ofstream encodedFile(encoded, std::ios::binary);
 	std::ifstream sapportEncodedFile(sapport, std::ios::binary);
-	if (i==0)
+	if (i == 0)
 	{
 		encodedFile << 0;
 	}
@@ -234,7 +253,7 @@ float  HuffmanTree::encode(const std::string& original, const std::string& encod
 	encodedFile << sapportEncodedFile.rdbuf();
 	encodedFile.close();
 	sapportEncodedFile.close();
-	return (output /input)*100;
+	return (output / input) * 100;
 }
 
 bool HuffmanTree::decode(const std::string& encoded, const std::string& decoded)
@@ -242,38 +261,34 @@ bool HuffmanTree::decode(const std::string& encoded, const std::string& decoded)
 	std::ifstream encodedFile(encoded, std::ios::binary);
 	std::ofstream dencodedFile(decoded, std::ios::binary);
 	int insignificantCount;
+	encodedFile >> std::noskipws;
 	encodedFile >> insignificantCount;
-	unsigned char element;
-	encodedFile >> element;
+	unsigned char element1;
+	encodedFile >> element1;
+	unsigned char element2;
+	encodedFile >> element2;
 	BoolVector search;
-	search.addSymbol(element, 0);
+	search.addSymbol(element1, 0);
+	/*std::cout << "\nelement1:" << search << "\n";
+	BoolVector help;
+	help.addSymbol(element2, 0);
+	std::cout << "\nelement2:" << help << "\n";*/
 	int i = 0;
+	Node* pointer = m_root;
 	while (!encodedFile.eof())
 	{
-		Node* pointer= m_root;
 		while (pointer->getLeft() && pointer->getRight())
 		{
 			if (i > 7)
 			{
-				encodedFile >> element;
-				search.addSymbol(element, 0);
+				element1 = element2;
+				/*std::cout << "\nsearch:" << search << "\n";*/
+				search.addSymbol(element2, 0);
+				/*std::cout << "\nsearch:" << search << "\n";*/
+				encodedFile >> element2;
 				i = 0;
 			}
-			if (encodedFile.eof()) 
-			{
-				while (i+insignificantCount<7)
-				{
-					if (search[i] == false)
-					{
-						pointer = pointer->getLeft();
-						i++;
-					}
-					else if (search[i] == true)
-					{
-						pointer = pointer->getRight();
-						i++;
-					}
-				}
+			if (encodedFile.eof()) {
 				break;
 			}
 			if (search[i] == 1)
@@ -287,6 +302,9 @@ bool HuffmanTree::decode(const std::string& encoded, const std::string& decoded)
 				i++;
 			}
 		}
+		if (encodedFile.eof()) {
+			break;
+		}
 		for (int j = 0; j < 256; j++) {
 			if (pointer->getKey()[j] == 1)
 			{
@@ -294,11 +312,48 @@ bool HuffmanTree::decode(const std::string& encoded, const std::string& decoded)
 				break;
 			}
 		}
+		pointer = m_root;
+	}	
+	
+	while (i <8 - insignificantCount)
+	{	
+		/*std::cout << "\nsearch:" << search << "\n";*/
+		if (!pointer->getLeft() && !pointer->getRight())
+		{
+			for (int j = 0; j < 256; j++) {
+
+				if (pointer->getKey()[j] == 1)
+				{
+					dencodedFile << static_cast<unsigned char>(j);
+					break;
+				}
+			}
+			pointer = m_root;
+		}
+		int h = search[i];
+			if (search[i] == 0)
+			{
+				pointer = pointer->getLeft();
+				i++;
+			}
+			else if (search[i] == 1)
+			{
+				pointer = pointer->getRight();
+				i++;
+			}
+		
+	}
+	for (int j = 0; j < 256; j++) {
+		if (pointer->getKey()[j] == 1)
+		{
+			dencodedFile << static_cast<unsigned char>(j);
+			break;
+		}
 	}
 	return true;
 }
 
-void HuffmanTree::export(const std::string& text)
+void HuffmanTree::exportTree(const std::string& text)	
 {
 	if (!m_root)
 	{
@@ -319,7 +374,7 @@ void HuffmanTree::export(const std::string& text)
 	}
 	for (int i = 0; i < 256; i++)
 	{
-		file<<TAB[i]<<" ";
+		file << TAB[i] << " ";
 	}
 	file.close();
 }
@@ -358,7 +413,7 @@ void HuffmanTree::clear(Node* root)
 	delete root;
 }
 
-void HuffmanTree::import(const std::string& text)
+void HuffmanTree::import(const std::string & text)
 {
 	if (m_root)
 	{

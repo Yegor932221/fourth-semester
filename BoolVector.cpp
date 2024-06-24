@@ -1,6 +1,6 @@
 #include<assert.h>
 #include<string>
-
+#include <fstream>
 #include "BoolVector.h"
 
 BoolVector::BoolVector()
@@ -437,6 +437,7 @@ void BoolVector::Swap(int i, int j)
 
 const BoolVector::UC* BoolVector::getCells() const
 {
+	std::cout << *this<<std::endl;
 	return m_cells;
 }
 
@@ -444,4 +445,21 @@ void BoolVector::addSymbol(const UC symbol, int index)
 {
 	assert(index < m_cellCount);
 	m_cells[index] = symbol;
+}
+
+void BoolVector::toString(const BoolVector* vector)
+{
+	for (int j = 0; j < vector->m_length ; j++)
+	{
+		std::cout << (bool)(*vector)[j] << " ";
+	}
+}
+
+void BoolVector::BoolRank::Print()
+{
+	m_mask = m_mask & *m_cell;
+	if (m_mask == 0)
+		std::cout << "0";
+	else
+		std::cout << "1";
 }

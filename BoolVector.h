@@ -60,6 +60,7 @@ public:
 	friend	std::ostream& operator <<(std::ostream& stream, const BoolVector& vector);
 	const UC* getCells() const;
 	void addSymbol(const UC symbol, int index);
+	void toString(const BoolVector* vector);
 };
 
 class BoolVector::BoolRank
@@ -68,6 +69,7 @@ private:
 	uint8_t* m_cell = nullptr;
 	uint8_t m_mask = 1 << 7;
 public:
+	void Print();
 	BoolRank(UC* cell, const int mask);
 	BoolRank& operator=(const BoolRank& other);
 	BoolRank& operator=(const bool value);
